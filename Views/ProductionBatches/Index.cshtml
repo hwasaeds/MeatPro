@@ -1,0 +1,141 @@
+@model MeatPro.ViewModels.ProductionBatchIndexViewModel
+@{
+    ViewData["Title"] = "Production Batches";
+    var startPage = Math.Max(1, Model.PageNumber - 2);
+    var endPage = Math.Min(Model.TotalPages, startPage + 4);
+    if (endPage - startPage < 4)
+    {
+        startPage = Math.Max(1, endPage - 4);
+    }
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Production</div>
+            <h1 class="h3 mb-1">Production Batches</h1>
+            <p class="text-secondary mb-0">Trace production output to work orders, batches, and expiration dates.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-meatpro"><i class="bi bi-plus-lg me-2"></i>New Batch</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Total Batches</div>
+            <strong class="metric-value">@Model.TotalItems</strong>
+            <div class="metric-caption mt-1">Recorded batches</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Active / Good</div>
+            <strong class="metric-value">@Model.ActiveBatchCount</strong>
+            <div class="metric-caption mt-1">Currently traceable</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Expiring Soon</div>
+            <strong class="metric-value">@Model.ExpiringCount</strong>
+            <div class="metric-caption mt-1">Next 14 days</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Total Produced</div>
+            <strong class="metric-value">@Model.TotalProduced.ToString("N0")</strong>
+            <div class="metric-caption mt-1">Across filtered records</div>
+        </div>
+    </div>
+
+    <form method="get" class="module-toolbar mb-4">
+        <div class="toolbar-group flex-grow-1">
+            <div class="search-shell flex-grow-1" style="max-width: 420px;">
+                <i class="bi bi-search"></i>
+                <input asp-for="Search" type="search" class="form-control" placeholder="Search batches" />
+            </div>
+            <select asp-for="Sort" class="form-select">
+                <option value="newest">Newest</option>
+                <option value="batch">Batch A-Z</option>
+                <option value="batch_desc">Batch Z-A</option>
+                <option value="produced">Produced Asc</option>
+                <option value="produced_desc">Produced Desc</option>
+                <option value="quantity">Qty Low-High</option>
+                <option value="quantity_desc">Qty High-Low</option>
+            </select>
+            <button type="submit" class="btn btn-outline-meatpro">Apply</button>
+            <a asp-action="Index" class="btn btn-link text-decoration-none">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table class="table erp-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Batch #</th>
+                    <th>Work Order</th>
+                    <th>Product</th>
+                    <th>Produced</th>
+                    <th>Qty</th>
+                    <th>Trace Code</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-secondary py-5">No production batches found.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.BatchNumber</td>
+                            <td>@item.WorkOrderNumber</td>
+                            <td>@item.ProductName</td>
+                            <td>@item.ProducedAt.ToString("yyyy-MM-dd")</td>
+                            <td>@item.ProducedQuantity.ToString("N0")</td>
+                            <td>@item.TraceabilityCode</td>
+                            <td>@(item.ExpirationDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                            <td><span class="badge text-bg-@item.StatusTone">@item.Status</span></td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Batch actions">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-meatpro"><i class="bi bi-eye me-1"></i>View</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-meatpro"><i class="bi bi-pencil me-1"></i>Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
+        <div class="text-secondary small">Showing @Model.Items.Count of @Model.TotalItems records</div>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-secondary small">Page @Model.PageNumber of @Model.TotalPages</div>
+            <nav aria-label="Batches pagination">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-page="@(Model.PageNumber - 1)"><i class="bi bi-chevron-left"></i></a>
+                    </li>
+                    @for (var pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                    {
+                        <li class="page-item @(pageNumber == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-page="@(pageNumber)">@pageNumber</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-page="@(Model.PageNumber + 1)"><i class="bi bi-chevron-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

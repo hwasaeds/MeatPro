@@ -1,0 +1,54 @@
+@model MeatPro.ViewModels.UserDetailsViewModel
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Administration</div>
+            <h1 class="h3 mb-1">Delete User</h1>
+            <p class="text-secondary mb-0">This action removes the operator from the system.</p>
+        </div>
+        <a asp-action="UserDetails" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to details</a>
+    </div>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="alert alert-warning">
+        Deleting <strong>@Model.FullName</strong> (@Model.UserName) will remove the account permanently.
+    </div>
+
+    <div class="page-card p-3 mb-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-secondary">Email</dt>
+            <dd class="col-sm-8">@Model.Email</dd>
+
+            <dt class="col-sm-4 text-secondary">Department</dt>
+            <dd class="col-sm-8">@Model.Department</dd>
+
+            <dt class="col-sm-4 text-secondary">Roles</dt>
+            <dd class="col-sm-8">
+                @if (Model.Roles.Count == 0)
+                {
+                    <span class="text-secondary">None</span>
+                }
+                else
+                {
+                    @string.Join(", ", Model.Roles)
+                }
+            </dd>
+
+            <dt class="col-sm-4 text-secondary">Status</dt>
+            <dd class="col-sm-8"><span class="badge text-bg-@Model.StatusTone">@Model.Status</span></dd>
+        </dl>
+    </div>
+
+    <form asp-action="UserDelete" asp-route-id="@Model.Id" method="post" class="d-flex justify-content-center gap-2">
+        <a asp-action="UserDetails" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Delete User</button>
+    </form>
+</div>

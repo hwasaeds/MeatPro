@@ -1,0 +1,71 @@
+@model MeatPro.ViewModels.UserFormViewModel
+
+<div class="page-card p-4 p-lg-5">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <label asp-for="UserName" class="form-label"></label>
+            <input asp-for="UserName" class="form-control" placeholder="jdoe" />
+            <span asp-validation-for="UserName" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="john@meatpro.local" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" placeholder="John Doe" />
+            <span asp-validation-for="FullName" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="Department" class="form-label"></label>
+            <input asp-for="Department" class="form-control" placeholder="Production" />
+            <span asp-validation-for="Department" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" placeholder="+1 555 100 200" />
+            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" placeholder="@(Model.IsNew ? "Set initial password" : "Leave blank to keep current")" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+        </div>
+        <div class="col-12">
+            <label class="form-label">Roles</label>
+            <div class="row g-2">
+                @for (var i = 0; i < Model.AvailableRoles.Count; i++)
+                {
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="form-check">
+                            <input asp-for="AvailableRoles[i].IsSelected" class="form-check-input" type="checkbox" />
+                            <input asp-for="AvailableRoles[i].Name" type="hidden" />
+                            <label asp-for="AvailableRoles[i].IsSelected" class="form-check-label">@Model.AvailableRoles[i].Name</label>
+                        </div>
+                    </div>
+                }
+                @if (Model.AvailableRoles.Count == 0)
+                {
+                    <div class="col-12">
+                        <p class="text-secondary small mb-0">No roles available. Create roles first.</p>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-lg-6 d-flex align-items-end">
+            <div class="form-check form-switch fs-6 mb-1">
+                <input asp-for="IsLockedOut" class="form-check-input" type="checkbox" />
+                <label asp-for="IsLockedOut" class="form-check-label"></label>
+            </div>
+        </div>
+    </div>
+</div>

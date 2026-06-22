@@ -1,0 +1,40 @@
+@model MeatPro.ViewModels.ProductionPlanDetailsViewModel
+@{
+    ViewData["Title"] = "Delete Production Plan";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Production</div>
+            <h1 class="h3 mb-1">Delete Production Plan</h1>
+            <p class="text-secondary mb-0">This action removes the production plan permanently.</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to details</a>
+    </div>
+
+    <div class="alert alert-warning">
+        Deleting <strong>@Model.PlanCode</strong> will remove the record permanently.
+    </div>
+
+    <div class="page-card p-3 mb-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-4 text-secondary">Product</dt>
+                <dd class="col-sm-8">@Model.ProductName</dd>
+
+                <dt class="col-sm-4 text-secondary">Planned Quantity</dt>
+                <dd class="col-sm-8">@Model.PlannedQuantity.ToString("N0")</dd>
+
+                <dt class="col-sm-4 text-secondary">Date Range</dt>
+                <dd class="col-sm-8">@Model.StartDate.ToString("yyyy-MM-dd") &ndash; @Model.EndDate.ToString("yyyy-MM-dd")</dd>
+
+                <dt class="col-sm-4 text-secondary">Status</dt>
+                <dd class="col-sm-8"><span class="badge text-bg-@Model.StatusTone">@Model.Status</span></dd>
+            </dl>
+    </div>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex justify-content-center gap-2">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Delete Plan</button>
+    </form>
+</div>

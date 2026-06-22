@@ -1,0 +1,41 @@
+@model MeatPro.ViewModels.StockOperationViewModel
+@{
+    ViewData["Title"] = "Stock Out";
+}
+
+<div class="module-card">
+    <div class="section-title">
+        <div>
+            <div class="section-kicker text-dark">Inventory</div>
+            <h1 class="h3 mb-1">Stock Out: @Model.RawMaterialName</h1>
+            <p class="text-secondary mb-0">Remove stock from inventory. Current: @Model.CurrentStock @Model.UnitOfMeasure</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.RawMaterialId" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    </div>
+
+    <form method="post" class="page-card p-4 p-lg-5">
+        <input type="hidden" asp-for="RawMaterialId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label asp-for="Quantity" class="form-label"></label>
+                <input asp-for="Quantity" class="form-control" placeholder="0" />
+                <span asp-validation-for="Quantity" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="ReferenceNumber" class="form-label"></label>
+                <input asp-for="ReferenceNumber" class="form-control" placeholder="WO-2026-0001" />
+                <span asp-validation-for="ReferenceNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label"></label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional notes about this stock out"></textarea>
+                <span asp-validation-for="Notes" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-meatpro"><i class="bi bi-check-lg me-1"></i>Record Stock Out</button>
+            <a asp-action="Details" asp-route-id="@Model.RawMaterialId" class="btn btn-outline-meatpro ms-2">Cancel</a>
+        </div>
+    </form>
+</div>

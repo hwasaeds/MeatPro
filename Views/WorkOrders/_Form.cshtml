@@ -1,0 +1,50 @@
+@model MeatPro.ViewModels.WorkOrderFormViewModel
+
+<div class="page-card p-4 p-lg-5">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input asp-for="Id" type="hidden" />
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label asp-for="WorkOrderNumber" class="form-label"></label>
+                <input asp-for="WorkOrderNumber" class="form-control" placeholder="WO-2026-001" />
+                <span asp-validation-for="WorkOrderNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="ProductionPlanId" class="form-label"></label>
+                <select asp-for="ProductionPlanId" asp-items="@(new SelectList(Model.ProductionPlans, "Id", "PlanCode"))" class="form-select">
+                    <option value="">-- Select plan --</option>
+                </select>
+                <span asp-validation-for="ProductionPlanId" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-4">
+                <label asp-for="ScheduledDate" class="form-label"></label>
+                <input asp-for="ScheduledDate" type="date" class="form-control" />
+                <span asp-validation-for="ScheduledDate" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-4">
+                <label asp-for="Quantity" class="form-label"></label>
+                <input asp-for="Quantity" type="number" step="0.01" class="form-control" placeholder="500" />
+                <span asp-validation-for="Quantity" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-4">
+                <label asp-for="OutputQuantity" class="form-label"></label>
+                <input asp-for="OutputQuantity" type="number" step="0.01" class="form-control" placeholder="0" />
+                <span asp-validation-for="OutputQuantity" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" asp-items="@(new SelectList(Enum.GetValues<WorkOrderStatus>()))" class="form-select"></select>
+                <span asp-validation-for="Status" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="AssignedTo" class="form-label"></label>
+                <input asp-for="AssignedTo" class="form-control" placeholder="Production Line 1" />
+                <span asp-validation-for="AssignedTo" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label"></label>
+                <textarea asp-for="Notes" class="form-control" rows="2" placeholder="First run in progress"></textarea>
+                <span asp-validation-for="Notes" class="text-danger small"></span>
+            </div>
+        </div>
+</div>

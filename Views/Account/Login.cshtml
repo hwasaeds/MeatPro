@@ -1,0 +1,259 @@
+@model MeatPro.ViewModels.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Sign in";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MeatPro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        * { box-sizing: border-box; }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #0b0b0b 0%, #1a1a1a 50%, #0f0f0f 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(160px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .login-glow.g1 { top: -250px; left: -150px; background: #8b0000; opacity: 0.2; }
+        .login-glow.g2 { bottom: -250px; right: -150px; background: #d4af37; opacity: 0.1; }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .brand-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #8b0000, #5f0000);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: 0.08em;
+            box-shadow: 0 12px 32px rgba(139, 0, 0, 0.4);
+            margin-bottom: 1.2rem;
+            color: #fff;
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.45);
+            margin: 0;
+        }
+
+        .login-card .form-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .login-card .form-control {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 0.85rem 1.1rem;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .login-card .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+            color: #fff;
+        }
+        .login-card .form-control::placeholder { color: rgba(255, 255, 255, 0.2); }
+        .login-card .form-control.is-invalid { border-color: #e74c3c; }
+
+        .login-card .form-check-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        .login-card .form-check-input {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .login-card .form-check-input:checked {
+            background-color: #8b0000;
+            border-color: #8b0000;
+        }
+
+        .login-card .btn-login {
+            padding: 0.85rem;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(145deg, #8b0000, #5f0000);
+            color: #fff;
+            border: 0;
+            box-shadow: 0 12px 32px rgba(139, 0, 0, 0.35);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .login-card .btn-login:hover { transform: translateY(-1px); box-shadow: 0 16px 40px rgba(139, 0, 0, 0.45); }
+        .login-card .btn-login:active { transform: translateY(0); }
+
+        .login-card .validation-summary-errors {
+            background: rgba(231, 76, 60, 0.12);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .login-card .validation-summary-errors ul { margin: 0; padding-left: 1.2rem; }
+        .login-card .field-validation-error { color: #e74c3c; font-size: 0.8rem; }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .login-footer .credential-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            background: none;
+            border: 0;
+            padding: 0;
+        }
+        .login-footer .credential-toggle:hover { color: rgba(255, 255, 255, 0.6); }
+
+        .login-footer .credential-box {
+            display: none;
+            margin-top: 0.8rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .login-footer .credential-box code { color: #d4af37; background: none; padding: 0; }
+        .login-footer .credential-box.show { display: block; }
+
+        .login-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+        .login-back-link:hover { color: rgba(255, 255, 255, 0.6); }
+
+        @@media (max-width: 480px) {
+            .login-card { padding: 2rem 1.2rem; }
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-glow g1"></div>
+    <div class="login-glow g2"></div>
+
+    <div class="login-wrapper">
+        <a asp-controller="Home" asp-action="Index" class="login-back-link">
+            <i class="bi bi-arrow-left"></i> Back to home
+        </a>
+
+        <div class="login-card">
+            <div class="login-header">
+                <div class="brand-icon">MP</div>
+                <h1>Welcome back</h1>
+                <p>Sign in to your MeatPro workspace</p>
+            </div>
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="mb-3">
+                    <label asp-for="UserName" class="form-label">Email or username</label>
+                    <input asp-for="UserName" class="form-control" placeholder="you@company.com" />
+                    <span asp-validation-for="UserName" class="field-validation-error"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" class="form-control" placeholder="Enter your password" />
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Keep me signed in</label>
+                </div>
+
+                <button type="submit" class="btn-login">Sign in <i class="bi bi-arrow-right ms-1"></i></button>
+            </form>
+
+
+        </div>
+    </div>
+</body>
+</html>

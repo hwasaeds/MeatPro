@@ -1,0 +1,26 @@
+@model MeatPro.ViewModels.RawMaterialFormViewModel
+@{
+    ViewData["Title"] = "Edit Raw Material";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Inventory</div>
+            <h1 class="h3 mb-1">Edit Raw Material</h1>
+            <p class="text-secondary mb-0">Update stock, pricing, or supplier details.</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to details</a>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="vstack gap-4">
+        <partial name="_Form" model="Model" />
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-meatpro"><i class="bi bi-check-lg me-1"></i>Update Material</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

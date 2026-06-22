@@ -1,0 +1,321 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "MeatPro ERP";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .landing-page {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #0b0b0b 0%, #1a1a1a 50%, #0f0f0f 100%);
+            color: #fff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .landing-glow {
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .landing-glow.g1 { top: -200px; right: -150px; background: #d4af37; }
+        .landing-glow.g2 { bottom: -200px; left: -150px; background: #8b0000; }
+
+        .landing-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 2rem;
+            backdrop-filter: blur(18px);
+            background: rgba(11, 11, 11, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .landing-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .landing-brand .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #8b0000, #5f0000);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.08em;
+            box-shadow: 0 8px 24px rgba(139, 0, 0, 0.4);
+        }
+
+        .landing-brand .brand-name { font-weight: 800; font-size: 1.1rem; }
+        .landing-brand .brand-subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+        .landing-nav-links { display: flex; align-items: center; gap: 1rem; }
+
+        .landing-hero {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .landing-hero .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 1rem;
+            border-radius: 40px;
+            background: rgba(212, 175, 55, 0.12);
+            color: #d4af37;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .landing-hero h1 {
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.02;
+            margin-bottom: 1.2rem;
+        }
+
+        .landing-hero h1 .accent { color: #d4af37; }
+
+        .landing-hero p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 640px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .landing-hero .btn-hero {
+            padding: 1rem 2.8rem;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            background: linear-gradient(145deg, #8b0000, #5f0000);
+            color: #fff;
+            border: 0;
+            box-shadow: 0 18px 40px rgba(139, 0, 0, 0.35);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .landing-hero .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 22px 48px rgba(139, 0, 0, 0.45); }
+
+        .landing-hero .btn-hero-outline {
+            padding: 1rem 2.4rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .landing-hero .btn-hero-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+
+        .landing-hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+        .landing-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .landing-stat { text-align: center; }
+        .landing-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #d4af37; }
+        .landing-stat span { font-size: 0.85rem; color: rgba(255,255,255,0.45); }
+
+        .landing-features {
+            position: relative;
+            z-index: 1;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .landing-features h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .landing-features > p {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 3rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .feature-card {
+            padding: 1.8rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.2s ease;
+        }
+        .feature-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-3px); border-color: rgba(212,175,55,0.2); }
+        .feature-card i { font-size: 1.8rem; color: #d4af37; margin-bottom: 1rem; display: block; }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin: 0; }
+
+        .landing-footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 3rem 2rem;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .landing-credentials {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+        .landing-credentials:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); }
+        .landing-credentials code { color: #d4af37; }
+
+        @@media (max-width: 768px) {
+            .landing-hero { padding: 4rem 1.5rem 3rem; }
+            .landing-stats { gap: 2rem; }
+            .landing-nav { padding: 1rem 1.2rem; }
+            .landing-nav-links .btn { font-size: 0.85rem; padding: 0.6rem 1.2rem; }
+        }
+    </style>
+</head>
+<body class="landing-page">
+    <div class="landing-glow g1"></div>
+    <div class="landing-glow g2"></div>
+
+    <nav class="landing-nav">
+        <a asp-controller="Home" asp-action="Index" class="landing-brand">
+            <div class="brand-mark">MP</div>
+            <div>
+                <div class="brand-name">MeatPro</div>
+                <div class="brand-subtitle">Meat Manufacturing ERP</div>
+            </div>
+        </a>
+        <div class="landing-nav-links">
+            <a asp-controller="Account" asp-action="Login" class="btn btn-hero-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sign in</a>
+        </div>
+    </nav>
+
+    <section class="landing-hero">
+        <div class="eyebrow"><i class="bi bi-diamond-fill" style="font-size: 0.5rem;"></i> Meat Manufacturing ERP</div>
+        <h1>From <span class="accent">raw material</span> to finished product — track it all.</h1>
+        <p>MeatPro is a full‑cycle ERP purpose‑built for meat and protein processors. Manage inventory, production, procurement, and reporting in one place.</p>
+        <div class="landing-hero-actions">
+            <a asp-controller="Account" asp-action="Login" class="btn-hero">Get started <i class="bi bi-arrow-right ms-2"></i></a>
+            <a asp-controller="Account" asp-action="Login" class="btn-hero-outline">Sign in <i class="bi bi-box-arrow-in-right ms-1"></i></a>
+        </div>
+    </section>
+
+    <div class="landing-stats">
+        <div class="landing-stat"><strong>6</strong><span>ERP Modules</span></div>
+        <div class="landing-stat"><strong>100%</strong><span>Traceability</span></div>
+        <div class="landing-stat"><strong>Real‑time</strong><span>Inventory Tracking</span></div>
+        <div class="landing-stat"><strong>Role‑based</strong><span>Access Control</span></div>
+    </div>
+
+    <section class="landing-features">
+        <h2>Everything you need to run production</h2>
+        <p>Purpose-built modules that work together seamlessly.</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="bi bi-box-seam"></i>
+                <h3>Raw Materials</h3>
+                <p>Track ingredients, stock levels, reorder thresholds, and supplier sources.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-bag-check"></i>
+                <h3>Finished Goods</h3>
+                <p>Monitor output inventory, batch numbers, expiration windows, and pricing.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-kanban"></i>
+                <h3>Production Planning</h3>
+                <p>Create plans, schedule work orders, and register production batches with full traceability.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-truck"></i>
+                <h3>Procurement</h3>
+                <p>Manage suppliers, purchase transactions, and goods receipt workflows.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-graph-up"></i>
+                <h3>Reports & Analytics</h3>
+                <p>Inventory valuations, production output trends, and procurement spend analysis.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-shield-lock"></i>
+                <h3>Role-based Access</h3>
+                <p>Fine-grained permissions for production managers, inventory staff, and administrators.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="landing-footer">
+        <div>&copy; @DateTime.UtcNow.Year MeatPro ERP — Meat Manufacturing System</div>
+        <div class="landing-credentials" onclick="this.querySelector('code').style.opacity='1'">
+            <i class="bi bi-info-circle"></i>
+            Demo: <code style="opacity:0.3; transition: opacity 0.3s;">admin@meatpro.local / Admin123!</code>
+        </div>
+    </footer>
+</body>
+</html>

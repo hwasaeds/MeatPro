@@ -1,0 +1,92 @@
+@model MeatPro.ViewModels.FinishedGoodDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Inventory</div>
+            <h1 class="h3 mb-1">@Model.Name</h1>
+            <p class="text-secondary mb-0">SKU @Model.SKU | @Model.StorageLocation</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro"><i class="bi bi-pencil me-1"></i>Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</a>
+            <a asp-action="Index" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to list</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success border-0 shadow-sm">@successMessage</div>
+    }
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Stock Status</div>
+            <strong class="metric-value">@Model.Status</strong>
+            <div class="metric-caption mt-1">Current state</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Current Stock</div>
+            <strong class="metric-value">@Model.CurrentStock.ToString("N0")</strong>
+            <div class="metric-caption mt-1">Units on hand</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Unit Price</div>
+            <strong class="metric-value">@Model.UnitPrice.ToString("C")</strong>
+            <div class="metric-caption mt-1">Selling price</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Stock Value</div>
+            <strong class="metric-value">@Model.StockValue.ToString("C")</strong>
+            <div class="metric-caption mt-1">Estimated value</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Finished good details</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-secondary">Name</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-secondary">SKU</dt>
+                        <dd class="col-sm-8">@Model.SKU</dd>
+
+                        <dt class="col-sm-4 text-secondary">Batch Number</dt>
+                        <dd class="col-sm-8">@Model.BatchNumber</dd>
+
+                        <dt class="col-sm-4 text-secondary">Storage Location</dt>
+                        <dd class="col-sm-8">@Model.StorageLocation</dd>
+
+                        <dt class="col-sm-4 text-secondary">Expiration</dt>
+                        <dd class="col-sm-8">@(Model.ExpirationDate?.ToString("yyyy-MM-dd") ?? "No expiry date")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Reorder Level</dt>
+                        <dd class="col-sm-8">@Model.ReorderLevel.ToString("N0")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Created</dt>
+                        <dd class="col-sm-8">@Model.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+
+                        <dt class="col-sm-4 text-secondary">Updated</dt>
+                        <dd class="col-sm-8">@(Model.UpdatedAtUtc is null ? "Never" : Model.UpdatedAtUtc.Value.ToString("yyyy-MM-dd HH:mm") + " UTC")</dd>
+                    </dl>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
+                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <p class="text-secondary mb-3">This finished good is tracked against its reorder level and expiration date.</p>
+                    <h3 class="h6 text-uppercase text-secondary mb-2">Stock Actions</h3>
+                    <a asp-action="Adjust" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-3"><i class="bi bi-sliders me-1"></i>Adjust Stock</a>
+                    <hr />
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-2"><i class="bi bi-pencil me-1"></i>Edit Item</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete Item</a>
+            </div>
+        </div>
+    </div>
+</div>

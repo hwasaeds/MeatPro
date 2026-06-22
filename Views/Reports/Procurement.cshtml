@@ -1,0 +1,108 @@
+@model MeatPro.ViewModels.ProcurementReportViewModel
+@{
+    ViewData["Title"] = "Procurement Report";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Reports</div>
+            <h1 class="h3 mb-1">Procurement Report</h1>
+            <p class="text-secondary mb-0">Supplier spend, purchase history, and receipt tracking across the supply chain</p>
+        </div>
+        <a asp-action="ExportProcurementCsv" asp-route-dateFrom="@Model.DateFrom" asp-route-dateTo="@Model.DateTo" asp-route-statusFilter="@Model.StatusFilter" class="btn btn-meatpro"><i class="bi bi-download me-1"></i>Export CSV</a>
+    </div>
+
+    <form method="get" class="module-toolbar mb-4">
+        <div class="toolbar-group flex-grow-1 gap-2">
+            <div>
+                <label class="form-label small text-secondary mb-1">From</label>
+                <input type="date" name="dateFrom" class="form-control" value="@Model.DateFrom?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div>
+                <label class="form-label small text-secondary mb-1">To</label>
+                <input type="date" name="dateTo" class="form-control" value="@Model.DateTo?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div>
+                <label class="form-label small text-secondary mb-1">Status</label>
+                <select name="statusFilter" class="form-select">
+                    <option value="">All</option>
+                    <option value="Pending" selected="@(Model.StatusFilter == "Pending")">Pending</option>
+                    <option value="Received" selected="@(Model.StatusFilter == "Received")">Received</option>
+                    <option value="Cancelled" selected="@(Model.StatusFilter == "Cancelled")">Cancelled</option>
+                </select>
+            </div>
+            <div class="d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-outline-meatpro">Apply</button>
+                <a asp-action="Procurement" class="btn btn-link text-decoration-none">Reset</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Total Purchases</div>
+            <strong class="metric-value">@Model.TotalPurchases</strong>
+            <div class="metric-caption mt-1">All transactions</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Total Spend</div>
+            <strong class="metric-value">@Model.TotalSpend.ToString("C")</strong>
+            <div class="metric-caption mt-1">Overall cost</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Pending Receipts</div>
+            <strong class="metric-value">@Model.PendingCount</strong>
+            <div class="metric-caption mt-1">Awaiting receipt</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Received</div>
+            <strong class="metric-value">@Model.ReceivedCount</strong>
+            <div class="metric-caption mt-1">Completed receipts</div>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table erp-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Purchase #</th>
+                    <th>Supplier</th>
+                    <th>Date</th>
+                    <th class="text-end">Total Amount</th>
+                    <th>Received</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-secondary py-5">No procurement records found.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.PurchaseNumber</td>
+                            <td>@item.SupplierName</td>
+                            <td>@item.PurchasedOn.ToString("yyyy-MM-dd")</td>
+                            <td class="text-end">@item.TotalAmount.ToString("C")</td>
+                            <td>@(item.ReceivedOn?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>
+                                <span class="badge text-bg-@(item.Status == "Received" ? "success" : item.Status == "Pending" ? "warning" : "secondary")">@item.Status</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-secondary small">Showing @Model.Items.Count records</div>
+        <a asp-action="ExportProcurementCsv" asp-route-dateFrom="@Model.DateFrom" asp-route-dateTo="@Model.DateTo" asp-route-statusFilter="@Model.StatusFilter" class="btn btn-outline-meatpro btn-sm"><i class="bi bi-download me-1"></i>Export CSV</a>
+    </div>
+</div>

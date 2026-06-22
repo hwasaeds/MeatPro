@@ -1,0 +1,36 @@
+@model MeatPro.ViewModels.ReceivePurchaseViewModel
+@{
+    ViewData["Title"] = "Receive Purchase";
+}
+
+<div class="module-card">
+    <div class="section-title">
+        <div>
+            <div class="section-kicker text-dark">Procurement</div>
+            <h1 class="h3 mb-1">Receive: @Model.PurchaseNumber</h1>
+            <p class="text-secondary mb-0">@Model.SupplierName | @Model.TotalAmount.ToString("C")</p>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.PurchaseTransactionId" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    </div>
+
+    <form method="post" class="page-card p-4 p-lg-5">
+        <input type="hidden" asp-for="PurchaseTransactionId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label asp-for="ReceivedOn" class="form-label"></label>
+                <input asp-for="ReceivedOn" class="form-control" type="date" />
+                <span asp-validation-for="ReceivedOn" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label"></label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Receiving notes"></textarea>
+                <span asp-validation-for="Notes" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-meatpro"><i class="bi bi-check-lg me-1"></i>Mark as Received</button>
+            <a asp-action="Details" asp-route-id="@Model.PurchaseTransactionId" class="btn btn-outline-meatpro ms-2">Cancel</a>
+        </div>
+    </form>
+</div>

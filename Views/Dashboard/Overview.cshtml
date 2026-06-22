@@ -1,0 +1,202 @@
+@model MeatPro.ViewModels.DashboardViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-grid">
+    @foreach (var card in Model.MetricCards)
+    {
+        <div class="span-4 stat-card">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+                <div>
+                    <div class="meta-label">@card.Title</div>
+                    <div class="stat-value fs-3 fw-bold mt-1">@card.Value</div>
+                    <div class="meta-label mt-1">@card.Caption</div>
+                </div>
+                <div class="stat-icon"><i class="bi @card.Icon"></i></div>
+            </div>
+        </div>
+    }
+
+    <div class="span-7 dashboard-chart">
+        <div class="section-title">
+            <div>
+                <div class="section-kicker text-dark">Production</div>
+                <h5 class="mb-0">Production output trend</h5>
+            </div>
+        </div>
+        <div class="chart-wrap"><canvas id="productionOutputChart"></canvas></div>
+    </div>
+
+    <div class="span-5 dashboard-chart">
+        <div class="section-title">
+            <div>
+                <div class="section-kicker text-dark">Inventory</div>
+                <h5 class="mb-0">Inventory movement</h5>
+            </div>
+        </div>
+        <div class="chart-wrap"><canvas id="inventoryMovementChart"></canvas></div>
+    </div>
+
+    <div class="span-6 dashboard-chart">
+        <div class="section-title">
+            <div>
+                <div class="section-kicker text-dark">Products</div>
+                <h5 class="mb-0">Top produced products</h5>
+            </div>
+        </div>
+        <div class="chart-wrap"><canvas id="topProductsChart"></canvas></div>
+    </div>
+
+    <div class="span-6 dashboard-chart">
+        <div class="section-title">
+            <div>
+                <div class="section-kicker text-dark">Materials</div>
+                <h5 class="mb-0">Consumption analysis</h5>
+            </div>
+        </div>
+        <div class="chart-wrap"><canvas id="materialConsumptionChart"></canvas></div>
+    </div>
+
+    <div class="span-12 dashboard-chart">
+        <div class="section-title">
+            <div>
+                <div class="section-kicker text-dark">Activity</div>
+                <h5 class="mb-0">Recent operations</h5>
+            </div>
+        </div>
+        <div class="activity-list">
+            @foreach (var item in Model.RecentActivities)
+            {
+                <div class="activity-item">
+                    <div>
+                        <div class="fw-semibold">@item.Title</div>
+                        <small class="text-secondary">@item.Description</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge text-bg-@item.BadgeTone">@item.Badge</span>
+                        <div class="meta-label mt-1">@item.TimeAgo</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+    (function() {
+        var data = {
+            production: {
+                labels: @Html.Raw(JsonSerializer.Serialize(Model.ProductionOutputTrend.Labels)),
+                values: @Html.Raw(JsonSerializer.Serialize(Model.ProductionOutputTrend.Values))
+            },
+            inventory: {
+                labels: @Html.Raw(JsonSerializer.Serialize(Model.InventoryMovementChart.Labels)),
+                values: @Html.Raw(JsonSerializer.Serialize(Model.InventoryMovementChart.Values))
+            },
+            topProducts: {
+                labels: @Html.Raw(JsonSerializer.Serialize(Model.TopProducedProducts.Labels)),
+                values: @Html.Raw(JsonSerializer.Serialize(Model.TopProducedProducts.Values))
+            },
+            consumption: {
+                labels: @Html.Raw(JsonSerializer.Serialize(Model.MaterialConsumption.Labels)),
+                values: @Html.Raw(JsonSerializer.Serialize(Model.MaterialConsumption.Values))
+            }
+        };
+
+        var chartColors = {
+            primary: '#6366f1',
+            success: '#22c55e',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            info: '#06b6d4'
+        };
+
+        new Chart(document.getElementById('productionOutputChart'), {
+            type: 'bar',
+            data: {
+                labels: data.production.labels,
+                datasets: [{
+                    label: 'Output',
+                    data: data.production.values,
+                    backgroundColor: chartColors.primary + '33',
+                    borderColor: chartColors.primary,
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+            }
+        });
+
+        new Chart(document.getElementById('inventoryMovementChart'), {
+            type: 'doughnut',
+            data: {
+                labels: data.inventory.labels,
+                datasets: [{
+                    data: data.inventory.values,
+                    backgroundColor: [chartColors.success + 'cc', chartColors.danger + 'cc', chartColors.warning + 'cc', chartColors.info + 'cc'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16 } } }
+            }
+        });
+
+        new Chart(document.getElementById('topProductsChart'), {
+            type: 'bar',
+            data: {
+                labels: data.topProducts.labels,
+                datasets: [{
+                    label: 'Units produced',
+                    data: data.topProducts.values,
+                    backgroundColor: chartColors.success + '33',
+                    borderColor: chartColors.success,
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } }
+            }
+        });
+
+        new Chart(document.getElementById('materialConsumptionChart'), {
+            type: 'line',
+            data: {
+                labels: data.consumption.labels,
+                datasets: [{
+                    label: 'Consumed',
+                    data: data.consumption.values,
+                    backgroundColor: chartColors.warning + '33',
+                    borderColor: chartColors.warning,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+            }
+        });
+    })();
+</script>
+}

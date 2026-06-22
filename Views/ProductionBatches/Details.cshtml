@@ -1,0 +1,98 @@
+@model MeatPro.ViewModels.ProductionBatchDetailsViewModel
+@{
+    ViewData["Title"] = Model.BatchNumber;
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Production</div>
+            <h1 class="h3 mb-1">@Model.BatchNumber</h1>
+            <p class="text-secondary mb-0">@Model.ProductName | @Model.ProducedAt.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro"><i class="bi bi-pencil me-1"></i>Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</a>
+            <a asp-action="Index" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to list</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success border-0 shadow-sm">@successMessage</div>
+    }
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Status</div>
+            <strong class="metric-value">@Model.Status</strong>
+            <div class="metric-caption mt-1">Batch quality</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Produced Quantity</div>
+            <strong class="metric-value">@Model.ProducedQuantity.ToString("N0")</strong>
+            <div class="metric-caption mt-1">Output volume</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Raw Material Used</div>
+            <strong class="metric-value">@Model.RawMaterialConsumed.ToString("N0")</strong>
+            <div class="metric-caption mt-1">Consumed input</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Traceability</div>
+            <strong class="metric-value">@Model.TraceabilityCode</strong>
+            <div class="metric-caption mt-1">Trace code</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Batch details</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-secondary">Batch Number</dt>
+                        <dd class="col-sm-8">@Model.BatchNumber</dd>
+
+                        <dt class="col-sm-4 text-secondary">Work Order</dt>
+                        <dd class="col-sm-8">@Model.WorkOrderNumber</dd>
+
+                        <dt class="col-sm-4 text-secondary">Product</dt>
+                        <dd class="col-sm-8">@Model.ProductName</dd>
+
+                        <dt class="col-sm-4 text-secondary">Traceability Code</dt>
+                        <dd class="col-sm-8">@Model.TraceabilityCode</dd>
+
+                        <dt class="col-sm-4 text-secondary">Raw Material Consumed</dt>
+                        <dd class="col-sm-8">@Model.RawMaterialConsumed.ToString("N0")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Produced Quantity</dt>
+                        <dd class="col-sm-8">@Model.ProducedQuantity.ToString("N0")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Produced At</dt>
+                        <dd class="col-sm-8">@Model.ProducedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Expiration Date</dt>
+                        <dd class="col-sm-8">@(Model.ExpirationDate?.ToString("yyyy-MM-dd") ?? "No expiry date")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Notes</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "None" : Model.Notes)</dd>
+
+                        <dt class="col-sm-4 text-secondary">Created</dt>
+                        <dd class="col-sm-8">@Model.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+
+                        <dt class="col-sm-4 text-secondary">Updated</dt>
+                        <dd class="col-sm-8">@(Model.UpdatedAtUtc is null ? "Never" : Model.UpdatedAtUtc.Value.ToString("yyyy-MM-dd HH:mm") + " UTC")</dd>
+                    </dl>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
+                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <p class="text-secondary mb-3">This batch is currently <strong>@Model.Status</strong>.</p>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-2"><i class="bi bi-pencil me-1"></i>Edit Batch</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete Batch</a>
+            </div>
+        </div>
+    </div>
+</div>

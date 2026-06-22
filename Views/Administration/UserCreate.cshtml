@@ -1,0 +1,26 @@
+@model MeatPro.ViewModels.UserFormViewModel
+@{
+    ViewData["Title"] = "New User";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Administration</div>
+            <h1 class="h3 mb-1">Create User</h1>
+            <p class="text-secondary mb-0">Add a new operator to the system.</p>
+        </div>
+        <a asp-action="UserIndex" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to list</a>
+    </div>
+
+    <form asp-action="UserCreate" method="post" class="vstack gap-4">
+        <partial name="UserForm" model="Model" />
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="UserIndex" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-meatpro"><i class="bi bi-check-lg me-1"></i>Save User</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

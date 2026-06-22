@@ -1,0 +1,95 @@
+@model MeatPro.ViewModels.ProductDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Products</div>
+            <h1 class="h3 mb-1">@Model.Name</h1>
+            <p class="text-secondary mb-0">SKU @Model.SKU | @Model.CategoryName</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro"><i class="bi bi-pencil me-1"></i>Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</a>
+            <a asp-action="Index" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to list</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success border-0 shadow-sm">@successMessage</div>
+    }
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Status</div>
+            <strong class="metric-value">@Model.Status</strong>
+            <div class="metric-caption mt-1">Current state</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Selling Price</div>
+            <strong class="metric-value">@Model.SellingPrice.ToString("C")</strong>
+            <div class="metric-caption mt-1">Per unit</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Standard Yield</div>
+            <strong class="metric-value">@Model.StandardYield.ToString("P")</strong>
+            <div class="metric-caption mt-1">Production efficiency</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">UoM</div>
+            <strong class="metric-value">@Model.UnitOfMeasure</strong>
+            <div class="metric-caption mt-1">Unit of measure</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Product details</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-secondary">Name</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-secondary">SKU</dt>
+                        <dd class="col-sm-8">@Model.SKU</dd>
+
+                        <dt class="col-sm-4 text-secondary">Category</dt>
+                        <dd class="col-sm-8">@Model.CategoryName</dd>
+
+                        <dt class="col-sm-4 text-secondary">Description</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Description) ? "None" : Model.Description)</dd>
+
+                        <dt class="col-sm-4 text-secondary">Unit of Measure</dt>
+                        <dd class="col-sm-8">@Model.UnitOfMeasure</dd>
+
+                        <dt class="col-sm-4 text-secondary">Standard Yield</dt>
+                        <dd class="col-sm-8">@Model.StandardYield.ToString("P")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Reorder Level</dt>
+                        <dd class="col-sm-8">@Model.ReorderLevel.ToString("N0")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Selling Price</dt>
+                        <dd class="col-sm-8">@Model.SellingPrice.ToString("C")</dd>
+
+                        <dt class="col-sm-4 text-secondary">Created</dt>
+                        <dd class="col-sm-8">@Model.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</dd>
+
+                        <dt class="col-sm-4 text-secondary">Updated</dt>
+                        <dd class="col-sm-8">@(Model.UpdatedAtUtc is null ? "Never" : Model.UpdatedAtUtc.Value.ToString("yyyy-MM-dd HH:mm") + " UTC")</dd>
+                    </dl>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-card p-4 h-100">
+                    <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
+                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <p class="text-secondary mb-3">This product is currently @(Model.IsActive ? "active" : "inactive").</p>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-2"><i class="bi bi-pencil me-1"></i>Edit Product</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete Product</a>
+            </div>
+        </div>
+    </div>
+</div>

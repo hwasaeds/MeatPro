@@ -1,0 +1,129 @@
+@model MeatPro.ViewModels.AuditLogIndexViewModel
+@{
+    ViewData["Title"] = "Audit Log";
+    var startPage = Math.Max(1, Model.Page - 2);
+    var endPage = Math.Min(Model.TotalPages, startPage + 4);
+    if (endPage - startPage < 4) { startPage = Math.Max(1, endPage - 4); }
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">System</div>
+            <h1 class="h3 mb-1">Audit Log</h1>
+            <p class="text-secondary mb-0">Track all changes, creations, and deletions across the system.</p>
+        </div>
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-meatpro"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+    </div>
+
+    <form method="get" class="module-toolbar mb-4">
+        <div class="toolbar-group flex-wrap">
+            <select name="module" class="form-select" style="max-width:160px">
+                <option value="">All Modules</option>
+                @foreach (var m in Model.AvailableModules)
+                {
+                    <option value="@m" selected="@(Model.Module == m)">@m</option>
+                }
+            </select>
+            <select name="action" class="form-select" style="max-width:160px">
+                <option value="">All Actions</option>
+                @foreach (var a in Model.AvailableActions)
+                {
+                    <option value="@a" selected="@(Model.Action == a)">@a</option>
+                }
+            </select>
+            <input type="text" name="username" class="form-control" placeholder="Username" value="@Model.Username" style="max-width:160px" />
+            <input type="date" name="fromDate" class="form-control" value="@Model.FromDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
+            <input type="date" name="toDate" class="form-control" value="@Model.ToDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
+            <button type="submit" class="btn btn-outline-meatpro">Search</button>
+            <a asp-action="Index" class="btn btn-link text-decoration-none">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table class="table erp-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Module</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Entity ID</th>
+                    <th>User</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary py-5">No audit log entries found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="text-nowrap small">@item.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td><span class="badge bg-secondary">@item.Module</span></td>
+                            <td>@item.Action</td>
+                            <td>@item.EntityName</td>
+                            <td class="small">@item.EntityId</td>
+                            <td>@item.Username</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-meatpro" type="button" data-bs-toggle="collapse" data-bs-target="#audit-@item.Id" aria-expanded="false">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <div class="collapse mt-2" id="audit-@item.Id">
+                                    <div class="small">
+                                        @if (!string.IsNullOrWhiteSpace(item.OldValues))
+                                        {
+                                            <strong class="text-danger">Before:</strong>
+                                            <pre class="mb-1" style="font-size:0.75rem;">@item.OldValues</pre>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(item.NewValues))
+                                        {
+                                            <strong class="text-success">After:</strong>
+                                            <pre class="mb-0" style="font-size:0.75rem;">@item.NewValues</pre>
+                                        }
+                                        @if (string.IsNullOrWhiteSpace(item.OldValues) && string.IsNullOrWhiteSpace(item.NewValues))
+                                        {
+                                            <span class="text-secondary">No details</span>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
+            <div class="text-secondary small">Showing @Model.Items.Count of @Model.TotalItems entries</div>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div class="text-secondary small">Page @Model.Page of @Model.TotalPages</div>
+                <nav aria-label="Audit log pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-module="@Model.Module" asp-route-action="@Model.Action" asp-route-username="@Model.Username" asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page - 1)"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        @for (var pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                        {
+                            <li class="page-item @(pageNumber == Model.Page ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-module="@Model.Module" asp-route-action="@Model.Action" asp-route-username="@Model.Username" asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(pageNumber)">@pageNumber</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-module="@Model.Module" asp-route-action="@Model.Action" asp-route-username="@Model.Username" asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")" asp-route-page="@(Model.Page + 1)"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>

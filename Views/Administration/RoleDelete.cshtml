@@ -1,0 +1,52 @@
+@model MeatPro.ViewModels.RoleDetailsViewModel
+@{
+    ViewData["Title"] = "Delete Role";
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Administration</div>
+            <h1 class="h3 mb-1">Delete Role</h1>
+            <p class="text-secondary mb-0">This action removes the permission set from the system.</p>
+        </div>
+        <a asp-action="RoleDetails" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to details</a>
+    </div>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    @if (Model.UserCount > 0)
+    {
+        <div class="alert alert-danger">
+            <strong>Cannot delete @Model.Name</strong> — @Model.UserCount user(s) are still assigned to this role.
+            Remove all user assignments before deleting.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            Deleting <strong>@Model.Name</strong> will remove the role permanently.
+        </div>
+    }
+
+    <div class="page-card p-3 mb-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-4 text-secondary">Role Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4 text-secondary">Assigned Users</dt>
+            <dd class="col-sm-8">@Model.UserCount</dd>
+        </dl>
+    </div>
+
+    <form asp-action="RoleDelete" asp-route-id="@Model.Id" method="post" class="d-flex justify-content-center gap-2">
+        <a asp-action="RoleDetails" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+        @if (Model.UserCount == 0)
+        {
+            <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Delete Role</button>
+        }
+    </form>
+</div>

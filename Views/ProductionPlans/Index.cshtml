@@ -1,0 +1,143 @@
+@model MeatPro.ViewModels.ProductionPlanIndexViewModel
+@{
+    ViewData["Title"] = "Production Plans";
+    var startPage = Math.Max(1, Model.PageNumber - 2);
+    var endPage = Math.Min(Model.TotalPages, startPage + 4);
+    if (endPage - startPage < 4)
+    {
+        startPage = Math.Max(1, endPage - 4);
+    }
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">Production</div>
+            <h1 class="h3 mb-1">Production Plans</h1>
+            <p class="text-secondary mb-0">Create and review production schedules, targets, and timelines.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-meatpro"><i class="bi bi-plus-lg me-2"></i>New Plan</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    <div class="dashboard-grid mb-4">
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Total Plans</div>
+            <strong class="metric-value">@Model.TotalItems</strong>
+            <div class="metric-caption mt-1">Scheduled plans</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Active / Approved</div>
+            <strong class="metric-value">@Model.ActivePlanCount</strong>
+            <div class="metric-caption mt-1">In progress or approved</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Drafts</div>
+            <strong class="metric-value">@Model.DraftCount</strong>
+            <div class="metric-caption mt-1">Pending review</div>
+        </div>
+        <div class="span-3 metric-card">
+            <div class="metric-caption">Planned Quantity</div>
+            <strong class="metric-value">@Model.TotalPlannedQuantity.ToString("N0")</strong>
+            <div class="metric-caption mt-1">Across filtered records</div>
+        </div>
+    </div>
+
+    <form method="get" class="module-toolbar mb-4">
+        <div class="toolbar-group flex-grow-1">
+            <div class="search-shell flex-grow-1" style="max-width: 360px;">
+                <i class="bi bi-search"></i>
+                <input asp-for="Search" type="search" class="form-control" placeholder="Search plans" />
+            </div>
+            <select asp-for="StatusFilter" class="form-select" style="max-width: 180px;">
+                <option value="">All statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="Approved">Approved</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <select asp-for="Sort" class="form-select" style="max-width: 180px;">
+                <option value="newest">Newest</option>
+                <option value="start">Start Date</option>
+                <option value="start_desc">Start Date Desc</option>
+                <option value="quantity">Quantity Low-High</option>
+                <option value="quantity_desc">Quantity High-Low</option>
+            </select>
+            <button type="submit" class="btn btn-outline-meatpro">Apply</button>
+            <a asp-action="Index" class="btn btn-link text-decoration-none">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table class="table erp-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Plan #</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary py-5">No production plans found.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.PlanCode</td>
+                            <td>@item.ProductName</td>
+                            <td>@item.PlannedQuantity.ToString("N0")</td>
+                            <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                            <td><span class="badge text-bg-@item.StatusTone">@item.Status</span></td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Plan actions">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-meatpro"><i class="bi bi-eye me-1"></i>View</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-meatpro"><i class="bi bi-pencil me-1"></i>Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
+        <div class="text-secondary small">Showing @Model.Items.Count of @Model.TotalItems records</div>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="text-secondary small">Page @Model.PageNumber of @Model.TotalPages</div>
+            <nav aria-label="Plans pagination">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-statusFilter="@Model.StatusFilter" asp-route-page="@(Model.PageNumber - 1)"><i class="bi bi-chevron-left"></i></a>
+                    </li>
+                    @for (var pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                    {
+                        <li class="page-item @(pageNumber == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-statusFilter="@Model.StatusFilter" asp-route-page="@(pageNumber)">@pageNumber</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-sort="@Model.Sort" asp-route-statusFilter="@Model.StatusFilter" asp-route-page="@(Model.PageNumber + 1)"><i class="bi bi-chevron-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

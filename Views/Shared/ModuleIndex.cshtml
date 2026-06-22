@@ -1,0 +1,89 @@
+@model MeatPro.ViewModels.ModulePageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="module-card">
+    <div class="section-title align-items-start flex-column flex-md-row">
+        <div>
+            <div class="section-kicker text-dark">ERP Module</div>
+            <h1 class="h3 mb-1">@Model.Title</h1>
+            <p class="text-secondary mb-0">@Model.Subtitle</p>
+        </div>
+        <a href="@Model.PrimaryActionUrl" class="btn btn-meatpro">@Model.PrimaryActionText</a>
+    </div>
+
+    <div class="dashboard-grid mb-4">
+        @foreach (var metric in Model.Metrics)
+        {
+            <div class="span-4 metric-card">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <span class="metric-caption">@metric.Title</span>
+                        <strong class="metric-value">@metric.Value</strong>
+                        <div class="metric-caption mt-1">@metric.Caption</div>
+                    </div>
+                    <div class="stat-icon"><i class="bi @metric.Icon"></i></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="module-toolbar">
+        <div class="toolbar-group flex-grow-1">
+            <div class="search-shell flex-grow-1" style="max-width: 420px;">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="@Model.SearchPlaceholder" />
+            </div>
+            <select class="form-select">
+                <option>Sort newest</option>
+                <option>Sort oldest</option>
+                <option>Sort A to Z</option>
+            </select>
+            <select class="form-select">
+                <option>All statuses</option>
+                <option>Low stock</option>
+                <option>Active</option>
+                <option>Closed</option>
+            </select>
+        </div>
+        @if (Model.ShowExportActions)
+        {
+            <div class="toolbar-group">
+                <button type="button" class="btn btn-outline-meatpro">Export PDF</button>
+                <button type="button" class="btn btn-outline-meatpro">Export Excel</button>
+            </div>
+        }
+    </div>
+
+    <div class="table-wrap">
+        <table class="table erp-table align-middle">
+            <thead>
+                <tr>
+                    @foreach (var column in Model.Columns)
+                    {
+                        <th>@column.Header</th>
+                    }
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        @foreach (var cell in row.Cells)
+                        {
+                            <td>@cell</td>
+                        }
+                        <td><span class="badge text-bg-@row.BadgeTone">@row.Badge</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+        <div class="text-secondary small">Showing @Model.Rows.Count of @Model.TotalItems records</div>
+        <div class="text-secondary small">Page @Model.CurrentPage of @Model.TotalPages</div>
+    </div>
+</div>

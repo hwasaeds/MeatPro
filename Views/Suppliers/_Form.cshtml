@@ -1,0 +1,39 @@
+@model MeatPro.ViewModels.SupplierFormViewModel
+
+<div class="page-card p-4 p-lg-5">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input asp-for="Id" type="hidden" />
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="North Farm Ltd" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="ContactPerson" class="form-label"></label>
+                <input asp-for="ContactPerson" class="form-control" placeholder="Daniel White" />
+                <span asp-validation-for="ContactPerson" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="Phone" class="form-label"></label>
+                <input asp-for="Phone" class="form-control" placeholder="+1 555 200 101" />
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="sales@northfarm.local" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Address" class="form-label"></label>
+                <textarea asp-for="Address" class="form-control" rows="2" placeholder="Industrial Zone 5"></textarea>
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+            <div class="col-lg-6 d-flex align-items-end">
+                <div class="form-check form-switch fs-6 mb-1">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+            </div>
+        </div>
+</div>
