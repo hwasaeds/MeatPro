@@ -5,7 +5,7 @@ using MeatPro.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +15,8 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException("DefaultConnection is missing.");
 }
 
-var mysqlVersion = new MariaDbServerVersion(new Version(10, 4, 27));
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, mysqlVersion, mysqlOptions => mysqlOptions.MaxBatchSize(1)));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -43,6 +41,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
 });
 
 builder.Services.AddRateLimiter(limiter =>
@@ -76,6 +76,13 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<AlertViewFilter>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.AddService<AlertViewFilter>();
@@ -85,7 +92,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    await MySqlBootstrapper.EnsureDatabaseExistsAsync(connectionString);
+    await PostgresBootstrapper.EnsureDatabaseExistsAsync(connectionString);
     await SeedData.InitializeAsync(scope.ServiceProvider);
 }
 

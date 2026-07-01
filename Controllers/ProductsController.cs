@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator,Production Manager")]
 public sealed class ProductsController : Controller
 {
     private readonly IProductService _productService;

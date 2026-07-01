@@ -1,0 +1,495 @@
+================================================================================
+                         MEATPRO ERP - ENTITY RELATIONSHIP DIAGRAM
+================================================================================
+
+LEGEND:
+  PK  = Primary Key
+  FK  = Foreign Key
+  (R) = Required
+  (O) = Optional / Nullable
+  1   = One side of relationship
+  *   = Many side of relationship
+  --- = Direct relationship (FK)
+  ~~~ = Logical / string reference (no FK)
+
+
+================================================================================
+                             1. IDENTITY TABLES
+             (Managed by ASP.NET Core Identity Framework)
+================================================================================
+
+  +------------------+       +------------------+
+  |   AspNetRoles    |       |   AspNetUsers    |
+  +------------------+       +------------------+
+  | Id (PK)          |       | Id (PK)          |
+  | Name             |       | UserName         |
+  | NormalizedName   |       | NormalizedUserName|
+  | ConcurrencyStamp |       | Email            |
+  +--------+---------+       | NormalizedEmail  |
+           |                 | EmailConfirmed   |
+           |                 | PasswordHash     |
+           |                 | SecurityStamp    |
+           |                 | ConcurrencyStamp |
+           |                 | PhoneNumber      |
+           |                 | PhoneNumberConfirmed
+           |                 | TwoFactorEnabled |
+           |                 | LockoutEnd       |
+           |                 | LockoutEnabled   |
+           |                 | AccessFailedCount|
+           |                 | FullName     (R) |
+           |                 | Department   (R) |
+           +-------+         +--------+---------+
+                   |                  |
+    +--------------+------+          |
+    |   AspNetUserRoles   |          |
+    +--------------+------+          |
+                   |                 |
+                   +-------+---------+
+                           |
+                    (Many-to-Many:
+                     Users <-> Roles)
+
+
+  +------------------+       +------------------+
+  | AspNetUserClaims |       | AspNetRoleClaims |
+  +------------------+       +------------------+
+  | Id (PK)          |       | Id (PK)          |
+  | UserId (FK) ---->|       | RoleId (FK) ---->|
+  | ClaimType        |       | ClaimType        |
+  | ClaimValue       |       | ClaimValue       |
+  +------------------+       +------------------+
+
+  +-------------------+       +------------------+
+  | AspNetUserLogins  |       | AspNetUserTokens |
+  +-------------------+       +------------------+
+  | LoginProvider (PK)|       | UserId (PK)      |
+  | ProviderKey (PK)  |       | LoginProvider(PK)|
+  | UserId (FK) ----> |       | Name (PK)        |
+  | ProviderDisplayName|      | Value            |
+  +-------------------+       +------------------+
+
+
+================================================================================
+                           2. DOMAIN ENTITIES
+================================================================================
+
+
+  +----------------------------------------------+
+  |            ProductCategory                    |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Name (R)              string                 |
+  | Description           string                 |
+  | IsActive              bool                   |
+  +----------------------------------------------+
+            |  1
+            |
+            | (ProductCategoryId nullable FK)
+            |
+            v  *
+  +----------------------------------------------+
+  |                 Product                       |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Name (R)              string(200)            |
+  | SKU (R, Unique)       string(60)             |
+  | ProductCategoryId (O) int?  ------------> FK |
+  | Description           string                 |
+  | UnitOfMeasure         string(50)             |
+  | StandardYield         decimal(18,2)          |
+  | ReorderLevel          decimal(18,2)          |
+  | SellingPrice          decimal(18,2)          |
+  | IsActive              bool                   |
+  +----------------------------------------------+
+  1  |                    1  |
+     |                       |
+     | (ProductId FK)        | (ProductId FK)
+     |                       |
+     v  *                   v  *
+  +---------------------+  +---------------------+
+  |   ProductionPlan    |  |   ProductionBatch   |
+  +---------------------+  +---------------------+
+  | Id (PK)             |  | Id (PK)             |
+  | CreatedAtUtc        |  | CreatedAtUtc        |
+  | UpdatedAtUtc (O)    |  | UpdatedAtUtc (O)    |
+  | PlanCode (R,Unique) |  | BatchNumber(R,Uniq) |
+  | ProductId (R, FK)   |  | WorkOrderId (R, FK) |
+  | PlannedQuantity     |  | ProductId (R, FK)   |
+  | StartDate           |  | TraceabilityCode    |
+  | EndDate             |  | RawMaterialConsumed |
+  | Status (Enum)       |  | ProducedQuantity    |
+  | Notes               |  | ProducedAt          |
+  | CreatedByUser       |  | ExpirationDate (O)  |
+  +----------+----------+  | Notes               |
+             | 1            +----------+----------+
+             |                        |
+             | (ProductionPlanId FK)  | (WorkOrderId FK)
+             |                        |
+             v  *                    v  *
+  +---------------------+  +---------------------+
+  |      WorkOrder       |  |      WorkOrder      |
+  +---------------------+  +---------------------+
+  | Id (PK)             |  | (Same entity,       |
+  | CreatedAtUtc        |  |  self-referencing   |
+  | UpdatedAtUtc (O)    |  |  via Production-    |
+  | WorkOrderNum(R,Uniq)|  |  Batch)             |
+  | ProductionPlanId(R) |  +---------------------+
+  | ScheduledDate       |
+  | Quantity            |
+  | Status (Enum)       |
+  | AssignedTo          |
+  | OutputQuantity      |
+  | Notes               |
+  +---------------------+
+
+
+  +----------------------------------------------+
+  |              RawMaterial                      |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Name (R)              string(200)            |
+  | SKU (R, Unique)       string(60)             |
+  | UnitOfMeasure         string(50)             |
+  | CurrentStock          decimal(18,2)          |
+  | ReorderLevel          decimal(18,2)          |
+  | UnitCost              decimal(18,2)          |
+  | Location              string(200)            |
+  | ExpirationDate (O)    DateTime?              |
+  | SupplierName          string(200)   (logical)|
+  | IsActive              bool                   |
+  +----------------------------------------------+
+  (No FK relationships - uses string references)
+
+
+  +----------------------------------------------+
+  |              FinishedGood                     |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Name (R)              string(200)            |
+  | SKU (R, Unique)       string(60)             |
+  | BatchNumber           string(60)             |
+  | ExpirationDate (O)    DateTime?              |
+  | CurrentStock          decimal(18,2)          |
+  | ReorderLevel          decimal(18,2)          |
+  | UnitPrice             decimal(18,2)          |
+  | StorageLocation       string(200)            |
+  | IsActive              bool                   |
+  +----------------------------------------------+
+  (No FK relationships)
+
+
+  +----------------------------------------------+
+  |            StockMovement                      |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | MovementType (Enum)   InventoryMovementType  |
+  | ItemType              string                 |
+  | ItemName              string                 |
+  | Quantity              decimal                |
+  | UnitCost              decimal                |
+  | ReferenceNumber       string                 |
+  | Notes (O)             string(500)            |
+  | MovementDate          DateTime               |
+  | PerformedBy           string                 |
+  | IsApproved            bool                   |
+  +----------------------------------------------+
+  (No FK relationships - generic movement log)
+
+
+  +----------------------------------------------+
+  |               Supplier                        |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Name (R, Unique)      string(200)            |
+  | ContactPerson         string(200)            |
+  | Phone                 string(60)             |
+  | Email                 string(200)            |
+  | Address               string(500)            |
+  | IsActive              bool                   |
+  +----------------------------------------------+
+            |  1
+            |
+            | (SupplierId FK)
+            |
+            v  *
+  +----------------------------------------------+
+  |          PurchaseTransaction                  |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | PurchaseNumber(R,Uniq) string(60)            |
+  | SupplierId (R, FK)    int                    |
+  | PurchasedOn           DateTime               |
+  | Status (Enum)         PurchaseStatus         |
+  | TotalAmount           decimal(18,2)          |
+  | ReceivedOn (O)        DateTime?              |
+  | Notes (O)             string(1000)           |
+  +----------------------------------------------+
+
+
+  +----------------------------------------------+
+  |            NotificationItem                   |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Title (R)             string(200)            |
+  | Message (R)           string(500)            |
+  | Type (Enum)           NotificationType       |
+  | IsRead                bool                   |
+  | ExpiresAtUtc (O)      DateTime?              |
+  +----------------------------------------------+
+  (Standalone - no relationships)
+
+
+  +----------------------------------------------+
+  |              AuditLog                         |
+  +----------------------------------------------+
+  | Id (PK)               int                    |
+  | CreatedAtUtc          DateTime               |
+  | UpdatedAtUtc (O)      DateTime?              |
+  | Module (R)            string(100)            |
+  | Action (R)            string(100)            |
+  | EntityName (R)        string(150)            |
+  | EntityId (R)          string(150)            |
+  | Username              string                 |
+  | OldValues (O)         string? (JSON)         |
+  | NewValues (O)         string? (JSON)         |
+  | IpAddress (O)         string?                |
+  +----------------------------------------------+
+  (Standalone - no relationships)
+
+
+================================================================================
+                      3. RELATIONSHIP SUMMARY
+================================================================================
+
+  ProductCategory (1) --------< (0..*) Product
+    (A category can have many products; a product may belong to one category)
+
+  Product (1) --------< (0..*) ProductionPlan
+    (A product can be planned many times; each plan is for one product)
+
+  Product (1) --------< (0..*) ProductionBatch
+    (A product can appear in many batches; each batch produces one product)
+
+  ProductionPlan (1) --------< (0..*) WorkOrder
+    (A plan can have many work orders; each work order belongs to one plan)
+
+  WorkOrder (1) --------< (0..*) ProductionBatch
+    (A work order can have many batches; each batch belongs to one work order)
+
+  Supplier (1) --------< (0..*) PurchaseTransaction
+    (A supplier can have many purchases; each purchase is from one supplier)
+
+  ApplicationUser (1) --------< (0..*) AuditLog
+    (Referenced by Username string - no formal FK)
+
+  ApplicationUser (1) --------< (0..*) StockMovement
+    (Referenced by PerformedBy string - no formal FK)
+
+
+================================================================================
+                      4. ENTITIES WITHOUT FK RELATIONSHIPS
+================================================================================
+
+  These entities are standalone (no foreign keys to other domain entities).
+  They reference other entities via string fields only:
+
+  Entity              String Reference Fields
+  --------            -----------------------
+  RawMaterial         SupplierName (logical reference to Supplier.Name)
+  FinishedGood        (no references to other entities)
+  StockMovement       ItemType, ItemName, PerformedBy, ReferenceNumber
+  NotificationItem    (standalone - no references)
+  AuditLog            EntityName, EntityId, Username (generic references)
+
+
+================================================================================
+                     5. ENUMERATIONS REFERENCE
+================================================================================
+
+  InventoryMovementType (int)
+  ├── 1 = StockIn
+  ├── 2 = StockOut
+  ├── 3 = Adjustment
+  └── 4 = ReleaseToProduction
+
+  ProductionPlanStatus (int)
+  ├── 1 = Draft
+  ├── 2 = Approved
+  ├── 3 = InProgress
+  ├── 4 = Completed
+  └── 5 = Cancelled
+
+  WorkOrderStatus (int)
+  ├── 1 = Draft
+  ├── 2 = Planned
+  ├── 3 = InProgress
+  ├── 4 = OnHold
+  ├── 5 = Completed
+  └── 6 = Cancelled
+
+  PurchaseStatus (int)
+  ├── 1 = Draft
+  ├── 2 = Ordered
+  ├── 3 = PartiallyReceived
+  ├── 4 = Received
+  └── 5 = Cancelled
+
+  NotificationType (int)
+  ├── 1 = Info
+  ├── 2 = Success
+  ├── 3 = Warning
+  └── 4 = Danger
+
+
+================================================================================
+                   6. APPLICATION ROLES (RBAC)
+================================================================================
+
+  Role Name                    Description
+  ----------                   -----------
+  System Administrator         Full system access
+  Production Manager           Manage production plans, work orders, batches
+  Inventory Personnel          Manage raw materials, finished goods, stock
+  Procurement Manager          Manage suppliers and purchase transactions
+
+
+================================================================================
+                     7. COMPLETE ENTITY LIST (19 Tables)
+================================================================================
+
+  Identity Tables (7):
+    1. AspNetUsers        (ApplicationUser + IdentityUser fields)
+    2. AspNetRoles        (IdentityRole)
+    3. AspNetUserRoles    (User-Role mapping)
+    4. AspNetUserClaims
+    5. AspNetRoleClaims
+    6. AspNetUserLogins
+    7. AspNetUserTokens
+
+  Domain Entities (12):
+     8. ProductCategory
+     9. Product
+    10. RawMaterial
+    11. FinishedGood
+    12. StockMovement
+    13. ProductionPlan
+    14. WorkOrder
+    15. ProductionBatch
+    16. Supplier
+    17. PurchaseTransaction
+    18. NotificationItem
+    19. AuditLog
+
+
+================================================================================
+             8. SCHEMATIC ERD (CROWS-FOOT NOTATION)
+================================================================================
+
+  ┌──────────────────┐           ┌──────────────────┐
+  │  ProductCategory │1───*<     │     Product      │
+  │                  │           │                  │
+  │  PK: Id          │           │  PK: Id          │
+  │  Name            │           │  SKU (UQ)        │
+  │  Description     │           │  FK: CategoryId  │
+  │  IsActive        │           │  UnitOfMeasure   │
+  └──────────────────┘           │  StandardYield   │
+                                 │  ReorderLevel    │
+                                 │  SellingPrice    │
+                                 │  IsActive        │
+                                 └────────┬─────────┘
+                                          │
+                      ┌───────────────────┼───────────────────┐
+                      │                   │                   │
+                      │ 1                 │ 1                 │
+                      │                   │                   │
+                      *                   *                   *
+  ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+  │  ProductionPlan  │   │  ProductionBatch │   │  (Product refs)  │
+  │                  │   │                  │   │                  │
+  │  PK: Id          │   │  PK: Id          │   │                  │
+  │  PlanCode (UQ)   │   │  BatchNum (UQ)   │   │                  │
+  │  FK: ProductId   │   │  FK: WorkOrderId │   │                  │
+  │  PlannedQuantity │   │  FK: ProductId   │   │                  │
+  │  StartDate       │   │  ProducedQty     │   │                  │
+  │  EndDate         │   │  ExpirationDate  │   │                  │
+  │  Status (Enum)   │   │  Traceability    │   │                  │
+  └────────┬─────────┘   └────────┬─────────┘   │                  │
+           │                      │              └──────────────────┘
+           │ 1                    │ *
+           │                      │
+           *                      │
+  ┌──────────────────┐            │
+  │    WorkOrder      │            │
+  │                  │            │
+  │  PK: Id          │            │
+  │  WO# (UQ)        │            │
+  │  FK: PlanId      │            │
+  │  ScheduledDate   │            │
+  │  Quantity        │            │
+  │  Status (Enum)   │            │
+  │  AssignedTo      │            │
+  │  OutputQuantity  │            │
+  └──────────────────┘            │
+                                  │
+  ┌──────────────────┐           ┌──────────────────┐
+  │    Supplier       │1───*<    │PurchaseTransact. │
+  │                  │           │                  │
+  │  PK: Id          │           │  PK: Id          │
+  │  Name (UQ)       │           │  Purch# (UQ)     │
+  │  ContactPerson   │           │  FK: SupplierId  │
+  │  Phone           │           │  PurchasedOn     │
+  │  Email           │           │  Status (Enum)   │
+  │  Address         │           │  TotalAmount     │
+  │  IsActive        │           │  ReceivedOn      │
+  └──────────────────┘           │  Notes           │
+                                 └──────────────────┘
+
+  (Standalone Entities - no FK relationships)
+
+  ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+  │   RawMaterial    │   │  FinishedGood    │   │  StockMovement   │
+  │                  │   │                  │   │                  │
+  │  PK: Id          │   │  PK: Id          │   │  PK: Id          │
+  │  SKU (UQ)        │   │  SKU (UQ)        │   │  MovementType    │
+  │  CurrentStock    │   │  CurrentStock    │   │  ItemType        │
+  │  ReorderLevel    │   │  ReorderLevel    │   │  ItemName        │
+  │  UnitCost        │   │  UnitPrice       │   │  Quantity        │
+  │  SupplierName    │   │  BatchNumber     │   │  ReferenceNumber │
+  │  ExpirationDate  │   │  ExpirationDate  │   │  PerformedBy     │
+  │  Location        │   │  StorageLocation │   │  MovementDate    │
+  │  IsActive        │   │  IsActive        │   │  IsApproved      │
+  └──────────────────┘   └──────────────────┘   └──────────────────┘
+
+  ┌──────────────────┐   ┌──────────────────┐
+  │ NotificationItem │   │    AuditLog      │
+  │                  │   │                  │
+  │  PK: Id          │   │  PK: Id          │
+  │  Title           │   │  Module          │
+  │  Message         │   │  Action          │
+  │  Type (Enum)     │   │  EntityName      │
+  │  IsRead          │   │  EntityId        │
+  │  ExpiresAtUtc    │   │  Username        │
+  └──────────────────┘   │  OldValues (JSON)│
+                         │  NewValues (JSON)│
+                         │  IpAddress       │
+                         └──────────────────┘
+
+================================================================================
+              END OF ENTITY RELATIONSHIP DIAGRAM
+================================================================================

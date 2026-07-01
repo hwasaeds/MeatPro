@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator,Production Manager")]
 public sealed class ProductionController : Controller
 {
     private readonly IProductionService _productionService;

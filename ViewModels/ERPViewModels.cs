@@ -68,6 +68,7 @@ public sealed class ChartSeriesViewModel
 
 public sealed class ModulePageViewModel
 {
+    public string ModuleName { get; set; } = "Inventory";
     public string Title { get; set; } = string.Empty;
     public string Subtitle { get; set; } = string.Empty;
     public string SearchPlaceholder { get; set; } = string.Empty;

@@ -1,5 +1,5 @@
 using MeatPro.Models;
-using MySqlConnector;
+using Npgsql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +39,57 @@ public static class SeedData
 
             await userManager.CreateAsync(admin, "Admin123!");
             await userManager.AddToRolesAsync(admin, AppRoles.All);
+        }
+
+        var prodEmail = "production@meatpro.local";
+        var prod = await userManager.FindByEmailAsync(prodEmail);
+        if (prod is null)
+        {
+            prod = new ApplicationUser
+            {
+                UserName = prodEmail,
+                Email = prodEmail,
+                EmailConfirmed = true,
+                FullName = "Juan dela Cruz",
+                Department = "Production"
+            };
+
+            await userManager.CreateAsync(prod, "Prod@1234");
+            await userManager.AddToRoleAsync(prod, AppRoles.ProductionManager);
+        }
+
+        var invEmail = "inventory@meatpro.local";
+        var inv = await userManager.FindByEmailAsync(invEmail);
+        if (inv is null)
+        {
+            inv = new ApplicationUser
+            {
+                UserName = invEmail,
+                Email = invEmail,
+                EmailConfirmed = true,
+                FullName = "Maria Santos",
+                Department = "Warehouse"
+            };
+
+            await userManager.CreateAsync(inv, "Inv@1234");
+            await userManager.AddToRoleAsync(inv, AppRoles.InventoryPersonnel);
+        }
+
+        var procEmail = "procurement@meatpro.local";
+        var proc = await userManager.FindByEmailAsync(procEmail);
+        if (proc is null)
+        {
+            proc = new ApplicationUser
+            {
+                UserName = procEmail,
+                Email = procEmail,
+                EmailConfirmed = true,
+                FullName = "Pedro Reyes",
+                Department = "Procurement"
+            };
+
+            await userManager.CreateAsync(proc, "Proc@1234");
+            await userManager.AddToRoleAsync(proc, AppRoles.ProcurementManager);
         }
 
         if (await context.Products.AnyAsync())
@@ -138,25 +189,33 @@ public static class SeedData
     }
 }
 
-public static class MySqlBootstrapper
+public static class PostgresBootstrapper
 {
     public static async Task EnsureDatabaseExistsAsync(string connectionString)
     {
-        var builder = new MySqlConnectionStringBuilder(connectionString);
+        var builder = new NpgsqlConnectionStringBuilder(connectionString);
         var databaseName = builder.Database;
 
         if (string.IsNullOrWhiteSpace(databaseName))
         {
-            throw new InvalidOperationException("The MySQL connection string must include a database name.");
+            throw new InvalidOperationException("The PostgreSQL connection string must include a database name.");
         }
 
-        builder.Database = string.Empty;
+        builder.Database = "postgres";
 
-        await using var connection = new MySqlConnection(builder.ConnectionString);
+        await using var connection = new NpgsqlConnection(builder.ConnectionString);
         await connection.OpenAsync();
 
-        await using var command = connection.CreateCommand();
-        command.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
-        await command.ExecuteNonQueryAsync();
+        await using var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = "SELECT 1 FROM pg_database WHERE datname = @name";
+        checkCmd.Parameters.AddWithValue("@name", databaseName);
+        var exists = await checkCmd.ExecuteScalarAsync();
+
+        if (exists is null)
+        {
+            await using var createCmd = connection.CreateCommand();
+            createCmd.CommandText = $"CREATE DATABASE \"{databaseName}\"";
+            await createCmd.ExecuteNonQueryAsync();
+        }
     }
 }

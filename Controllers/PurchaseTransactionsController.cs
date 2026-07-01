@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator,Procurement Manager")]
 public sealed class PurchaseTransactionsController : Controller
 {
     private readonly IPurchaseTransactionService _purchaseTransactionService;

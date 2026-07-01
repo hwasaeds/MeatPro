@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator,Procurement Manager")]
 public sealed class SuppliersController : Controller
 {
     private readonly ISupplierService _supplierService;

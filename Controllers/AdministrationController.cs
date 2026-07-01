@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator")]
 public sealed class AdministrationController : Controller
 {
     private readonly IAdministrationService _administrationService;

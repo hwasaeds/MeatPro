@@ -26,28 +26,46 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(currentController == "Dashboard" ? "active" : "")"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-                <div class="nav-group-title">Inventory</div>
-                <a asp-controller="RawMaterials" asp-action="Index" class="nav-link @(currentController == "RawMaterials" ? "active" : "")"><i class="bi bi-box-seam"></i><span>Raw Materials</span></a>
-                <a asp-controller="FinishedGoods" asp-action="Index" class="nav-link @(currentController == "FinishedGoods" ? "active" : "")"><i class="bi bi-bag-check"></i><span>Finished Goods</span></a>
-                <a asp-controller="Inventory" asp-action="StockMovements" class="nav-link @(currentController == "Inventory" ? "active" : "")"><i class="bi bi-arrow-left-right"></i><span>Stock Movements</span></a>
-                <div class="nav-group-title">Products</div>
-                <a asp-controller="Products" asp-action="Index" class="nav-link @(currentController == "Products" ? "active" : "")"><i class="bi bi-box"></i><span>Products</span></a>
-                <div class="nav-group-title">Production</div>
-                <a asp-controller="ProductionPlans" asp-action="Index" class="nav-link @(currentController == "ProductionPlans" ? "active" : "")"><i class="bi bi-kanban"></i><span>Production Plans</span></a>
-                <a asp-controller="WorkOrders" asp-action="Index" class="nav-link @(currentController == "WorkOrders" ? "active" : "")"><i class="bi bi-clipboard2-check"></i><span>Work Orders</span></a>
-                <a asp-controller="ProductionBatches" asp-action="Index" class="nav-link @(currentController == "ProductionBatches" ? "active" : "")"><i class="bi bi-qr-code-scan"></i><span>Batch Traceability</span></a>
-                <div class="nav-group-title">Procurement</div>
-                <a asp-controller="Suppliers" asp-action="Index" class="nav-link @(currentController == "Suppliers" ? "active" : "")"><i class="bi bi-truck"></i><span>Suppliers</span></a>
-                <a asp-controller="PurchaseTransactions" asp-action="Index" class="nav-link @(currentController == "PurchaseTransactions" ? "active" : "")"><i class="bi bi-receipt"></i><span>Purchase Transactions</span></a>
-                <div class="nav-group-title">Reports</div>
-                <a asp-controller="Reports" asp-action="Index" class="nav-link @(currentController == "Reports" ? "active" : "")"><i class="bi bi-graph-up"></i><span>Reports</span></a>
-                <div class="nav-group-title">Administration</div>
-                <a asp-controller="Administration" asp-action="UserIndex" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-people"></i><span>Users</span></a>
-                <a asp-controller="Administration" asp-action="RoleIndex" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-shield-lock"></i><span>Roles</span></a>
-                <a asp-controller="Administration" asp-action="Settings" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-gear"></i><span>Settings</span></a>
-                <a asp-controller="Notifications" asp-action="Index" class="nav-link @(currentController == "Notifications" ? "active" : "")"><i class="bi bi-bell"></i><span>Notifications</span></a>
-                <a asp-controller="AuditLog" asp-action="Index" class="nav-link @(currentController == "AuditLog" ? "active" : "")"><i class="bi bi-journal-text"></i><span>Audit Log</span></a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(currentController == "Dashboard" ? "active" : "")"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+                }
+                @if (User.IsInRole("System Administrator") || User.IsInRole("Inventory Personnel"))
+                {
+                    <div class="nav-group-title">Inventory</div>
+                    <a asp-controller="RawMaterials" asp-action="Index" class="nav-link @(currentController == "RawMaterials" ? "active" : "")"><i class="bi bi-box-seam"></i><span>Raw Materials</span></a>
+                    <a asp-controller="FinishedGoods" asp-action="Index" class="nav-link @(currentController == "FinishedGoods" ? "active" : "")"><i class="bi bi-bag-check"></i><span>Finished Goods</span></a>
+                    <a asp-controller="Inventory" asp-action="StockMovements" class="nav-link @(currentController == "Inventory" ? "active" : "")"><i class="bi bi-arrow-left-right"></i><span>Stock Movements</span></a>
+                }
+                @if (User.IsInRole("System Administrator") || User.IsInRole("Production Manager"))
+                {
+                    <div class="nav-group-title">Products</div>
+                    <a asp-controller="Products" asp-action="Index" class="nav-link @(currentController == "Products" ? "active" : "")"><i class="bi bi-box"></i><span>Products</span></a>
+                    <div class="nav-group-title">Production</div>
+                    <a asp-controller="ProductionPlans" asp-action="Index" class="nav-link @(currentController == "ProductionPlans" ? "active" : "")"><i class="bi bi-kanban"></i><span>Production Plans</span></a>
+                    <a asp-controller="WorkOrders" asp-action="Index" class="nav-link @(currentController == "WorkOrders" ? "active" : "")"><i class="bi bi-clipboard2-check"></i><span>Work Orders</span></a>
+                    <a asp-controller="ProductionBatches" asp-action="Index" class="nav-link @(currentController == "ProductionBatches" ? "active" : "")"><i class="bi bi-qr-code-scan"></i><span>Batch Traceability</span></a>
+                }
+                @if (User.IsInRole("System Administrator") || User.IsInRole("Procurement Manager"))
+                {
+                    <div class="nav-group-title">Procurement</div>
+                    <a asp-controller="Suppliers" asp-action="Index" class="nav-link @(currentController == "Suppliers" ? "active" : "")"><i class="bi bi-truck"></i><span>Suppliers</span></a>
+                    <a asp-controller="PurchaseTransactions" asp-action="Index" class="nav-link @(currentController == "PurchaseTransactions" ? "active" : "")"><i class="bi bi-receipt"></i><span>Purchase Transactions</span></a>
+                }
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="nav-group-title">Reports</div>
+                    <a asp-controller="Reports" asp-action="Index" class="nav-link @(currentController == "Reports" ? "active" : "")"><i class="bi bi-graph-up"></i><span>Reports</span></a>
+                }
+                @if (User.IsInRole("System Administrator"))
+                {
+                    <div class="nav-group-title">Administration</div>
+                    <a asp-controller="Administration" asp-action="UserIndex" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-people"></i><span>Users</span></a>
+                    <a asp-controller="Administration" asp-action="RoleIndex" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-shield-lock"></i><span>Roles</span></a>
+                    <a asp-controller="Administration" asp-action="Settings" class="nav-link @(currentController == "Administration" ? "active" : "")"><i class="bi bi-gear"></i><span>Settings</span></a>
+                    <a asp-controller="Notifications" asp-action="Index" class="nav-link @(currentController == "Notifications" ? "active" : "")"><i class="bi bi-bell"></i><span>Notifications</span></a>
+                    <a asp-controller="AuditLog" asp-action="Index" class="nav-link @(currentController == "AuditLog" ? "active" : "")"><i class="bi bi-journal-text"></i><span>Audit Log</span></a>
+                }
             </nav>
         </aside>
 

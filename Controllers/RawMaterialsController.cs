@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeatPro.Controllers;
 
-[Authorize]
+[Authorize(Roles = "System Administrator,Inventory Personnel")]
 public sealed class RawMaterialsController : Controller
 {
     private readonly IRawMaterialService _rawMaterialService;

@@ -53,9 +53,17 @@ public sealed class AccountController : Controller
             return View(model);
         }
 
+        if (!user.IsActive)
+        {
+            ModelState.AddModelError("", "Your account has been deactivated. Contact the administrator.");
+            return View(model);
+        }
+
         var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded)
         {
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
             return LocalRedirect(model.ReturnUrl ?? Url.Action("Index", "Dashboard")!);
         }
 
@@ -69,6 +77,7 @@ public sealed class AccountController : Controller
         return View(model);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
