@@ -6,6 +6,7 @@ namespace MeatPro.ViewModels;
 public sealed class ProductionBatchIndexViewModel
 {
     public string Search { get; set; } = string.Empty;
+    public string? StatusFilter { get; set; }
     public string Sort { get; set; } = "newest";
     public IReadOnlyList<ProductionBatchListItemViewModel> Items { get; set; } = Array.Empty<ProductionBatchListItemViewModel>();
     public int TotalItems { get; set; }

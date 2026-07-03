@@ -16,10 +16,10 @@ public sealed class DashboardController : Controller
         _alertService = alertService;
     }
 
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int days = 30, CancellationToken cancellationToken = default)
     {
         await _alertService.GenerateAlertsAsync(cancellationToken);
-        var model = await _dashboardService.BuildAsync(cancellationToken);
+        var model = await _dashboardService.BuildAsync(days, cancellationToken);
         return View("Overview", model);
     }
 }

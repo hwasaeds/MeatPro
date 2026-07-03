@@ -6,6 +6,7 @@ namespace MeatPro.ViewModels;
 public sealed class ProductIndexViewModel
 {
     public string Search { get; set; } = string.Empty;
+    public string? StatusFilter { get; set; }
     public string Sort { get; set; } = "newest";
     public IReadOnlyList<ProductListItemViewModel> Items { get; set; } = Array.Empty<ProductListItemViewModel>();
     public int TotalItems { get; set; }

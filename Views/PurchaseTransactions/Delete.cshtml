@@ -26,10 +26,10 @@
                 <dd class="col-sm-8">@Model.PurchasedOn.ToString("yyyy-MM-dd")</dd>
 
                 <dt class="col-sm-4 text-secondary">Amount</dt>
-                <dd class="col-sm-8">@Model.TotalAmount.ToString("C")</dd>
+                <dd class="col-sm-8">@Model.TotalAmount.ToString("'₱'#,##0.00")</dd>
 
                 <dt class="col-sm-4 text-secondary">Status</dt>
-                <dd class="col-sm-8"><span class="badge text-bg-@Model.StatusTone">@Model.Status</span></dd>
+                <dd class="col-sm-8"><span class="fw-semibold text-@Model.StatusTone">@Model.Status</span></dd>
             </dl>
     </div>
 

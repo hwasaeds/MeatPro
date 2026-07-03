@@ -9,7 +9,7 @@ namespace MeatPro.Services;
 
 public interface IDashboardService
 {
-    Task<DashboardViewModel> BuildAsync(CancellationToken cancellationToken = default);
+    Task<DashboardViewModel> BuildAsync(int days = 30, CancellationToken cancellationToken = default);
 }
 
 public interface IInventoryService
@@ -65,19 +65,34 @@ public sealed class DashboardService : IDashboardService
         _context = context;
     }
 
-    public async Task<DashboardViewModel> BuildAsync(CancellationToken cancellationToken = default)
+    public async Task<DashboardViewModel> BuildAsync(int days = 30, CancellationToken cancellationToken = default)
     {
+        var dateFrom = days > 0 ? DateTime.UtcNow.AddDays(-days) : (DateTime?)null;
+
         var rawMaterials = await _context.RawMaterials.AsNoTracking().ToListAsync(cancellationToken);
         var workOrders = await _context.WorkOrders.AsNoTracking().ToListAsync(cancellationToken);
         var finishedGoods = await _context.FinishedGoods.AsNoTracking().ToListAsync(cancellationToken);
         var suppliers = await _context.Suppliers.AsNoTracking().ToListAsync(cancellationToken);
-        var batches = await _context.ProductionBatches.AsNoTracking().ToListAsync(cancellationToken);
-        var movements = await _context.StockMovements.AsNoTracking().ToListAsync(cancellationToken);
+
+        var batches = dateFrom.HasValue
+            ? await _context.ProductionBatches.AsNoTracking().Where(b => b.ProducedAt >= dateFrom.Value).ToListAsync(cancellationToken)
+            : await _context.ProductionBatches.AsNoTracking().ToListAsync(cancellationToken);
+
+        var movements = dateFrom.HasValue
+            ? await _context.StockMovements.AsNoTracking().Where(m => m.MovementDate >= dateFrom.Value).ToListAsync(cancellationToken)
+            : await _context.StockMovements.AsNoTracking().ToListAsync(cancellationToken);
+
         var products = await _context.Products.AsNoTracking().ToListAsync(cancellationToken);
-        var purchases = await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier).ToListAsync(cancellationToken);
+
+        var purchases = dateFrom.HasValue
+            ? await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier).Where(p => p.PurchasedOn >= dateFrom.Value).ToListAsync(cancellationToken)
+            : await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier).ToListAsync(cancellationToken);
+
+        var periodLabel = days switch { 7 => "7 days", 30 => "30 days", 90 => "90 days", 365 => "1 year", _ => "All time" };
 
         var dashboard = new DashboardViewModel
         {
+            SelectedPeriodDays = days,
             TotalRawMaterials = rawMaterials.Count,
             LowStockMaterials = rawMaterials.Count(x => x.CurrentStock <= x.ReorderLevel),
             ActiveWorkOrders = workOrders.Count(x => x.Status is WorkOrderStatus.Planned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold),
@@ -93,7 +108,7 @@ public sealed class DashboardService : IDashboardService
             new MetricCardViewModel { Title = "Low Stock Materials", Value = dashboard.LowStockMaterials.ToString(), Caption = "Reorder soon", Icon = "bi-exclamation-triangle", Tone = "warning" },
             new MetricCardViewModel { Title = "Active Work Orders", Value = dashboard.ActiveWorkOrders.ToString(), Caption = "In progress", Icon = "bi-clipboard2-check", Tone = "success" },
             new MetricCardViewModel { Title = "Finished Goods Count", Value = dashboard.FinishedGoodsCount.ToString(), Caption = "Units on hand", Icon = "bi-bag-check", Tone = "secondary" },
-            new MetricCardViewModel { Title = "Monthly Production Output", Value = dashboard.MonthlyProductionOutput.ToString("N0"), Caption = "Last 30 days", Icon = "bi-graph-up-arrow", Tone = "primary" },
+            new MetricCardViewModel { Title = "Production Output", Value = dashboard.MonthlyProductionOutput.ToString("N0"), Caption = periodLabel, Icon = "bi-graph-up-arrow", Tone = "primary" },
             new MetricCardViewModel { Title = "Total Suppliers", Value = dashboard.TotalSuppliers.ToString(), Caption = "Vendor base", Icon = "bi-truck", Tone = "success" }
         };
 

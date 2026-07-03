@@ -24,23 +24,31 @@
 
     <div class="dashboard-grid mb-4">
         <div class="span-3 metric-card">
-            <div class="metric-caption">Stock Status</div>
-            <strong class="metric-value">@Model.Status</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Stock Status</div>
+                <strong class="metric-value">@Model.Status</strong>
+            </div>
             <div class="metric-caption mt-1">Current state</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Current Stock</div>
-            <strong class="metric-value">@Model.CurrentStock.ToString("N0")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Current Stock</div>
+                <strong class="metric-value">@Model.CurrentStock.ToString("N0")</strong>
+            </div>
             <div class="metric-caption mt-1">Units on hand</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Unit Price</div>
-            <strong class="metric-value">@Model.UnitPrice.ToString("C")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Unit Price</div>
+                <strong class="metric-value">@Model.UnitPrice.ToString("'₱'#,##0.00")</strong>
+            </div>
             <div class="metric-caption mt-1">Selling price</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Stock Value</div>
-            <strong class="metric-value">@Model.StockValue.ToString("C")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Stock Value</div>
+                <strong class="metric-value">@Model.StockValue.ToString("'₱'#,##0.00")</strong>
+            </div>
             <div class="metric-caption mt-1">Estimated value</div>
         </div>
     </div>
@@ -79,7 +87,7 @@
         <div class="col-lg-4">
             <div class="page-card p-4 h-100">
                     <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
-                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <span class="fw-semibold text-@Model.StatusTone mb-3">@Model.Status</span>
                     <p class="text-secondary mb-3">This finished good is tracked against its reorder level and expiration date.</p>
                     <h3 class="h6 text-uppercase text-secondary mb-2">Stock Actions</h3>
                     <a asp-action="Adjust" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-3"><i class="bi bi-sliders me-1"></i>Adjust Stock</a>

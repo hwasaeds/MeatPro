@@ -24,23 +24,31 @@
 
     <div class="dashboard-grid mb-4">
         <div class="span-3 metric-card">
-            <div class="metric-caption">Status</div>
-            <strong class="metric-value">@Model.Status</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Status</div>
+                <strong class="metric-value">@Model.Status</strong>
+            </div>
             <div class="metric-caption mt-1">Batch quality</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Produced Quantity</div>
-            <strong class="metric-value">@Model.ProducedQuantity.ToString("N0")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Produced Quantity</div>
+                <strong class="metric-value">@Model.ProducedQuantity.ToString("N0")</strong>
+            </div>
             <div class="metric-caption mt-1">Output volume</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Raw Material Used</div>
-            <strong class="metric-value">@Model.RawMaterialConsumed.ToString("N0")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Raw Material Used</div>
+                <strong class="metric-value">@Model.RawMaterialConsumed.ToString("N0")</strong>
+            </div>
             <div class="metric-caption mt-1">Consumed input</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Traceability</div>
-            <strong class="metric-value">@Model.TraceabilityCode</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Traceability</div>
+                <strong class="metric-value">@Model.TraceabilityCode</strong>
+            </div>
             <div class="metric-caption mt-1">Trace code</div>
         </div>
     </div>
@@ -88,7 +96,7 @@
         <div class="col-lg-4">
             <div class="page-card p-4 h-100">
                     <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
-                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <span class="fw-semibold text-@Model.StatusTone mb-3">@Model.Status</span>
                     <p class="text-secondary mb-3">This batch is currently <strong>@Model.Status</strong>.</p>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-2"><i class="bi bi-pencil me-1"></i>Edit Batch</a>
                     <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete Batch</a>

@@ -5,6 +5,7 @@ namespace MeatPro.ViewModels;
 public sealed class FinishedGoodIndexViewModel
 {
     public string Search { get; set; } = string.Empty;
+    public string? StatusFilter { get; set; }
     public string Sort { get; set; } = "newest";
     public IReadOnlyList<FinishedGoodListItemViewModel> Items { get; set; } = Array.Empty<FinishedGoodListItemViewModel>();
     public int TotalItems { get; set; }

@@ -40,23 +40,31 @@
 
     <div class="dashboard-grid mb-4">
         <div class="span-3 metric-card">
-            <div class="metric-caption">Total Work Orders</div>
-            <strong class="metric-value">@Model.TotalWorkOrders</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Total Work Orders</div>
+                <strong class="metric-value">@Model.TotalWorkOrders</strong>
+            </div>
             <div class="metric-caption mt-1">All time</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Completed</div>
-            <strong class="metric-value">@Model.CompletedOrders</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Completed</div>
+                <strong class="metric-value">@Model.CompletedOrders</strong>
+            </div>
             <div class="metric-caption mt-1">Fully finished</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Total Produced</div>
-            <strong class="metric-value">@Model.TotalProduced.ToString("N0")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Total Produced</div>
+                <strong class="metric-value">@Model.TotalProduced.ToString("N0")</strong>
+            </div>
             <div class="metric-caption mt-1">Units output</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Raw Material Consumed</div>
-            <strong class="metric-value">@Model.TotalConsumed.ToString("N0")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Raw Material Consumed</div>
+                <strong class="metric-value">@Model.TotalConsumed.ToString("N0")</strong>
+            </div>
             <div class="metric-caption mt-1">Total used</div>
         </div>
     </div>
@@ -95,11 +103,11 @@
                             <td class="text-end">@item.ProducedQuantity.ToString("N0")</td>
                             <td class="text-end">@item.RawMaterialConsumed.ToString("N0")</td>
                             <td class="text-end">
-                                <span class="badge text-bg-@(item.Yield >= 90 ? "success" : item.Yield >= 75 ? "warning" : "danger")">@item.Yield%</span>
+                                <span class="fw-semibold text-@(item.Yield >= 90 ? "success" : item.Yield >= 75 ? "warning" : "danger")">@item.Yield%</span>
                             </td>
                             <td>@item.ProducedAt.ToString("yyyy-MM-dd")</td>
                             <td>
-                                <span class="badge text-bg-@(item.Status == "Good" ? "success" : "warning")">@item.Status</span>
+                                <span class="fw-semibold text-@(item.Status == "Good" ? "success" : "warning")">@item.Status</span>
                             </td>
                         </tr>
                     }

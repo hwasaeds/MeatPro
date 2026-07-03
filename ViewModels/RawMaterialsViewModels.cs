@@ -5,6 +5,7 @@ namespace MeatPro.ViewModels;
 public sealed class RawMaterialIndexViewModel
 {
     public string Search { get; set; } = string.Empty;
+    public string? StatusFilter { get; set; }
     public string Sort { get; set; } = "newest";
     public IReadOnlyList<RawMaterialListItemViewModel> Items { get; set; } = Array.Empty<RawMaterialListItemViewModel>();
     public int TotalItems { get; set; }

@@ -4,6 +4,16 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<div class="d-flex justify-content-end mb-3">
+    <div class="btn-group btn-group-sm" role="group">
+        <a href="?days=7" class="btn @(Model.SelectedPeriodDays == 7 ? "btn-primary" : "btn-outline-secondary")">7d</a>
+        <a href="?days=30" class="btn @(Model.SelectedPeriodDays == 30 ? "btn-primary" : "btn-outline-secondary")">30d</a>
+        <a href="?days=90" class="btn @(Model.SelectedPeriodDays == 90 ? "btn-primary" : "btn-outline-secondary")">90d</a>
+        <a href="?days=365" class="btn @(Model.SelectedPeriodDays == 365 ? "btn-primary" : "btn-outline-secondary")">1y</a>
+        <a href="?days=0" class="btn @(Model.SelectedPeriodDays == 0 ? "btn-primary" : "btn-outline-secondary")">All</a>
+    </div>
+</div>
+
 <div class="dashboard-grid">
     @foreach (var card in Model.MetricCards)
     {
@@ -75,7 +85,7 @@
                         <small class="text-secondary">@item.Description</small>
                     </div>
                     <div class="text-end">
-                        <span class="badge text-bg-@item.BadgeTone">@item.Badge</span>
+                        <span class="fw-semibold text-@item.BadgeTone">@item.Badge</span>
                         <div class="meta-label mt-1">@item.TimeAgo</div>
                     </div>
                 </div>

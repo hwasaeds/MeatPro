@@ -316,7 +316,6 @@ body.sidebar-collapsed .sidebar::-webkit-scrollbar { width: 2px; }
 .metric-card .metric-value {
   display: block;
   font-size: 1.3rem;
-  margin-top: 0.35rem;
 }
 
 .dashboard-grid {

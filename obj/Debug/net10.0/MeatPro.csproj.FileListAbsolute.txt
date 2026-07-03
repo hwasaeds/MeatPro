@@ -96,7 +96,6 @@ C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\rjsmcshtml.dswa.cache.
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\scopedcss\bundle\MeatPro.styles.css
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\scopedcss\projectbundle\MeatPro.bundle.scp.css
-C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\compressed\i2nve8bqj9-{0}-h67043i92j-h67043i92j.gz
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\compressed\99fvpb01dx-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\compressed\8lqj1mdu8k-{0}-ehv7memcfi-ehv7memcfi.gz
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\compressed\wfss2e6jyu-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -171,3 +170,4 @@ C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\refint\MeatPro.dll
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\MeatPro.pdb
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\MeatPro.genruntimeconfig.cache
 C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\ref\MeatPro.dll
+C:\Users\castr\OneDrive\Desktop\MeatPro\obj\Debug\net10.0\compressed\i2nve8bqj9-{0}-cki8wr3wq6-cki8wr3wq6.gz

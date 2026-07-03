@@ -24,23 +24,31 @@
 
     <div class="dashboard-grid mb-4">
         <div class="span-3 metric-card">
-            <div class="metric-caption">Status</div>
-            <strong class="metric-value">@Model.Status</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Status</div>
+                <strong class="metric-value">@Model.Status</strong>
+            </div>
             <div class="metric-caption mt-1">Current state</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Selling Price</div>
-            <strong class="metric-value">@Model.SellingPrice.ToString("C")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Selling Price</div>
+                <strong class="metric-value">@Model.SellingPrice.ToString("'₱'#,##0.00")</strong>
+            </div>
             <div class="metric-caption mt-1">Per unit</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">Standard Yield</div>
-            <strong class="metric-value">@Model.StandardYield.ToString("P")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">Standard Yield</div>
+                <strong class="metric-value">@Model.StandardYield.ToString("P")</strong>
+            </div>
             <div class="metric-caption mt-1">Production efficiency</div>
         </div>
         <div class="span-3 metric-card">
-            <div class="metric-caption">UoM</div>
-            <strong class="metric-value">@Model.UnitOfMeasure</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="metric-caption">UoM</div>
+                <strong class="metric-value">@Model.UnitOfMeasure</strong>
+            </div>
             <div class="metric-caption mt-1">Unit of measure</div>
         </div>
     </div>
@@ -72,7 +80,7 @@
                         <dd class="col-sm-8">@Model.ReorderLevel.ToString("N0")</dd>
 
                         <dt class="col-sm-4 text-secondary">Selling Price</dt>
-                        <dd class="col-sm-8">@Model.SellingPrice.ToString("C")</dd>
+                        <dd class="col-sm-8">@Model.SellingPrice.ToString("'₱'#,##0.00")</dd>
 
                         <dt class="col-sm-4 text-secondary">Created</dt>
                         <dd class="col-sm-8">@Model.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") UTC</dd>
@@ -85,7 +93,7 @@
         <div class="col-lg-4">
             <div class="page-card p-4 h-100">
                     <h2 class="h6 text-uppercase text-secondary mb-3">Status</h2>
-                    <span class="badge text-bg-@Model.StatusTone mb-3">@Model.Status</span>
+                    <span class="fw-semibold text-@Model.StatusTone mb-3">@Model.Status</span>
                     <p class="text-secondary mb-3">This product is currently @(Model.IsActive ? "active" : "inactive").</p>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-meatpro w-100 mb-2"><i class="bi bi-pencil me-1"></i>Edit Product</a>
                     <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete Product</a>

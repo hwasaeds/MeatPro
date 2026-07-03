@@ -26,10 +26,10 @@
                 <dd class="col-sm-8">@Model.CategoryName</dd>
 
                 <dt class="col-sm-4 text-secondary">Selling Price</dt>
-                <dd class="col-sm-8">@Model.SellingPrice.ToString("C")</dd>
+                <dd class="col-sm-8">@Model.SellingPrice.ToString("'₱'#,##0.00")</dd>
 
                 <dt class="col-sm-4 text-secondary">Status</dt>
-                <dd class="col-sm-8"><span class="badge text-bg-@Model.StatusTone">@Model.Status</span></dd>
+                <dd class="col-sm-8"><span class="fw-semibold text-@Model.StatusTone">@Model.Status</span></dd>
             </dl>
     </div>
 
