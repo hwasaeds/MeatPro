@@ -74,3 +74,30 @@ public sealed class ProcurementReportItem
     public string Status { get; set; } = string.Empty;
     public DateTime? ReceivedOn { get; set; }
 }
+
+public sealed class SalesReportViewModel
+{
+    public DateTime? DateFrom { get; set; }
+    public DateTime? DateTo { get; set; }
+    public string? StatusFilter { get; set; }
+    public int TotalItems { get; set; }
+    public decimal TotalPotentialRevenue { get; set; }
+    public decimal TotalStockQuantity { get; set; }
+    public int LowStockCount { get; set; }
+    public int ExpiringCount { get; set; }
+    public IReadOnlyList<SalesReportItem> Items { get; set; } = Array.Empty<SalesReportItem>();
+}
+
+public sealed class SalesReportItem
+{
+    public string ProductName { get; set; } = string.Empty;
+    public string SKU { get; set; } = string.Empty;
+    public string BatchNumber { get; set; } = string.Empty;
+    public decimal CurrentStock { get; set; }
+    public decimal ReorderLevel { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal TotalValue { get; set; }
+    public string StorageLocation { get; set; } = string.Empty;
+    public DateTime? ExpirationDate { get; set; }
+    public string Status { get; set; } = string.Empty;
+}

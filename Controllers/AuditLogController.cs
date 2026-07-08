@@ -15,11 +15,11 @@ public sealed class AuditLogController : Controller
         _auditTrail = auditTrail;
     }
 
-    public async Task<IActionResult> Index(string? module, string? action, string? username, DateTime? fromDate, DateTime? toDate, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(string? module, [FromQuery(Name = "action")] string? auditAction, string? username, DateTime? fromDate, DateTime? toDate, int page = 1, CancellationToken cancellationToken = default)
     {
         var pageSize = 30;
-        var items = await _auditTrail.SearchAsync(module, action, username, fromDate, toDate, page, pageSize, cancellationToken);
-        var total = await _auditTrail.SearchCountAsync(module, action, username, fromDate, toDate, cancellationToken);
+        var items = await _auditTrail.SearchAsync(module, auditAction, username, fromDate, toDate, page, pageSize, cancellationToken);
+        var total = await _auditTrail.SearchCountAsync(module, auditAction, username, fromDate, toDate, cancellationToken);
         var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)pageSize));
         var modules = await _auditTrail.GetDistinctModulesAsync(cancellationToken);
         var actions = await _auditTrail.GetDistinctActionsAsync(cancellationToken);
@@ -39,7 +39,7 @@ public sealed class AuditLogController : Controller
                 Timestamp = x.CreatedAtUtc
             }).ToList(),
             Module = module,
-            Action = action,
+            Action = auditAction,
             Username = username,
             FromDate = fromDate,
             ToDate = toDate,

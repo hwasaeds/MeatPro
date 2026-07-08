@@ -9,32 +9,32 @@
 <div class="module-card">
     <div class="section-title align-items-start flex-column flex-md-row">
         <div>
-            <div class="section-kicker text-dark">System</div>
-            <h1 class="h3 mb-1">Audit Log</h1>
-            <p class="text-secondary mb-0">Track all changes, creations, and deletions across the system.</p>
+            <div class="section-kicker">System</div>
+            <h1 class="h4 fw-bold mb-1">Audit Log</h1>
+            <p class="text-secondary mb-0" style="font-size:0.875rem;">Track all changes, creations, and deletions across the system.</p>
         </div>
         <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-meatpro"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
     </div>
 
     <form method="get" class="module-toolbar mb-4">
         <div class="toolbar-group flex-wrap">
-            <select name="module" class="form-select" style="max-width:160px">
+            <select name="module" class="form-select" style="max-width:150px">
                 <option value="">All Modules</option>
                 @foreach (var m in Model.AvailableModules)
                 {
                     <option value="@m" selected="@(Model.Module == m)">@m</option>
                 }
             </select>
-            <select name="action" class="form-select" style="max-width:160px">
+            <select name="action" class="form-select" style="max-width:150px">
                 <option value="">All Actions</option>
                 @foreach (var a in Model.AvailableActions)
                 {
                     <option value="@a" selected="@(Model.Action == a)">@a</option>
                 }
             </select>
-            <input type="text" name="username" class="form-control" placeholder="Username" value="@Model.Username" style="max-width:160px" />
-            <input type="date" name="fromDate" class="form-control" value="@Model.FromDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
-            <input type="date" name="toDate" class="form-control" value="@Model.ToDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
+            <input type="text" name="username" class="form-control" placeholder="Username" value="@Model.Username" style="max-width:150px" />
+            <input type="date" name="fromDate" class="form-control" value="@Model.FromDate?.ToString("yyyy-MM-dd")" style="max-width:150px" />
+            <input type="date" name="toDate" class="form-control" value="@Model.ToDate?.ToString("yyyy-MM-dd")" style="max-width:150px" />
             <button type="submit" class="btn btn-outline-meatpro">Search</button>
             <a asp-action="Index" class="btn btn-link text-decoration-none">Reset</a>
         </div>
@@ -50,7 +50,7 @@
                     <th>Entity</th>
                     <th>Entity ID</th>
                     <th>User</th>
-                    <th>Details</th>
+                    <th class="text-center">Details</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,27 +65,27 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
-                            <td class="text-nowrap small">@item.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-nowrap text-secondary" style="font-size:0.8125rem;">@item.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
                             <td><span class="badge bg-secondary">@item.Module</span></td>
                             <td>@item.Action</td>
                             <td>@item.EntityName</td>
-                            <td class="small">@item.EntityId</td>
+                            <td class="text-secondary">@item.EntityId</td>
                             <td>@item.Username</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-meatpro" type="button" data-bs-toggle="collapse" data-bs-target="#audit-@item.Id" aria-expanded="false">
+                            <td class="text-center">
+                                <button class="btn btn-outline-meatpro btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#audit-@item.Id">
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <div class="collapse mt-2" id="audit-@item.Id">
-                                    <div class="small">
+                                <div class="collapse mt-2 text-start" id="audit-@item.Id">
+                                    <div style="font-size:0.8rem;">
                                         @if (!string.IsNullOrWhiteSpace(item.OldValues))
                                         {
                                             <strong class="text-danger">Before:</strong>
-                                            <pre class="mb-1" style="font-size:0.75rem;">@item.OldValues</pre>
+                                            <pre class="mb-1 p-2 bg-light rounded" style="font-size:0.7rem;overflow-x:auto;">@item.OldValues</pre>
                                         }
                                         @if (!string.IsNullOrWhiteSpace(item.NewValues))
                                         {
                                             <strong class="text-success">After:</strong>
-                                            <pre class="mb-0" style="font-size:0.75rem;">@item.NewValues</pre>
+                                            <pre class="mb-0 p-2 bg-light rounded" style="font-size:0.7rem;overflow-x:auto;">@item.NewValues</pre>
                                         }
                                         @if (string.IsNullOrWhiteSpace(item.OldValues) && string.IsNullOrWhiteSpace(item.NewValues))
                                         {

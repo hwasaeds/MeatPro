@@ -47,63 +47,75 @@
 	}
 
 	const dashboard = window.meatProDashboard;
-	if (!dashboard || typeof Chart === 'undefined') {
-		return;
-	}
+	if (!dashboard || typeof Chart === 'undefined') return;
 
 	const baseOptions = {
 		responsive: true,
 		maintainAspectRatio: false,
-		plugins: {
-			legend: { labels: { usePointStyle: true } }
-		}
+		plugins: { legend: { labels: { usePointStyle: true, boxWidth: 8, padding: 16 } } }
+	};
+
+	const chartColors = {
+		primary: '#8b0000',
+		success: '#22c55e',
+		warning: '#d4af37',
+		danger: '#ef4444',
+		info: '#06b6d4'
 	};
 
 	const charts = [
 		{
 			id: 'productionOutputChart',
-			type: 'line',
+			type: 'bar',
 			labels: dashboard.production.labels,
 			values: dashboard.production.values,
 			label: 'Output',
-			borderColor: '#8b0000',
-			backgroundColor: 'rgba(139, 0, 0, 0.16)',
-			fill: true,
-			tension: 0.35
+			backgroundColor: chartColors.primary + '22',
+			borderColor: chartColors.primary,
+			borderWidth: 2,
+			borderRadius: 4
 		},
 		{
 			id: 'inventoryMovementChart',
-			type: 'bar',
+			type: 'doughnut',
 			labels: dashboard.inventory.labels,
 			values: dashboard.inventory.values,
 			label: 'Movements',
-			borderRadius: 12,
-			backgroundColor: ['#8b0000', '#d4af37', '#6b7280', '#16a34a']
+			backgroundColor: [chartColors.success + 'cc', chartColors.danger + 'cc', chartColors.warning + 'cc', chartColors.info + 'cc'],
+			borderWidth: 0
 		},
 		{
 			id: 'topProductsChart',
-			type: 'doughnut',
+			type: 'bar',
 			labels: dashboard.topProducts.labels,
 			values: dashboard.topProducts.values,
-			label: 'Top products',
-			backgroundColor: ['#8b0000', '#d4af37', '#1f2937', '#16a34a']
+			label: 'Units produced',
+			backgroundColor: chartColors.success + '22',
+			borderColor: chartColors.success,
+			borderWidth: 2,
+			borderRadius: 4,
+			indexAxis: 'y'
 		},
 		{
 			id: 'materialConsumptionChart',
-			type: 'radar',
+			type: 'line',
 			labels: dashboard.consumption.labels,
 			values: dashboard.consumption.values,
-			label: 'Consumption',
-			borderColor: '#8b0000',
-			backgroundColor: 'rgba(212, 175, 55, 0.18)'
+			label: 'Consumed',
+			backgroundColor: chartColors.warning + '22',
+			borderColor: chartColors.warning,
+			borderWidth: 2,
+			fill: true,
+			tension: 0.4,
+			pointRadius: 3
 		}
 	];
 
 	charts.forEach(chart => {
 		const canvas = document.getElementById(chart.id);
-		if (!canvas) {
-			return;
-		}
+		if (!canvas) return;
+
+		const isHorizontal = chart.indexAxis === 'y';
 
 		new Chart(canvas, {
 			type: chart.type,
@@ -112,14 +124,26 @@
 				datasets: [{
 					label: chart.label,
 					data: chart.values,
+					backgroundColor: chart.backgroundColor || '#8b0000',
 					borderColor: chart.borderColor || '#8b0000',
-					backgroundColor: chart.backgroundColor || 'rgba(139, 0, 0, 0.16)',
+					borderWidth: chart.borderWidth ?? 0,
 					fill: chart.fill ?? false,
 					tension: chart.tension ?? 0,
 					borderRadius: chart.borderRadius ?? 0,
 				}]
 			},
-			options: baseOptions
+			options: {
+				...baseOptions,
+				indexAxis: isHorizontal ? 'y' : undefined,
+				scales: isHorizontal ? {
+					x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+					y: { grid: { display: false } }
+				} : {
+					y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+					x: { grid: { display: false } }
+				}
+			}
 		});
 	});
+
 })();

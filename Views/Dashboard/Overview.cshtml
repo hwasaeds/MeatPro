@@ -4,13 +4,17 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="d-flex justify-content-end mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <div class="section-kicker">Overview</div>
+        <h1 class="h4 fw-bold mb-0 mt-1">Dashboard</h1>
+    </div>
     <div class="btn-group btn-group-sm" role="group">
-        <a href="?days=7" class="btn @(Model.SelectedPeriodDays == 7 ? "btn-primary" : "btn-outline-secondary")">7d</a>
-        <a href="?days=30" class="btn @(Model.SelectedPeriodDays == 30 ? "btn-primary" : "btn-outline-secondary")">30d</a>
-        <a href="?days=90" class="btn @(Model.SelectedPeriodDays == 90 ? "btn-primary" : "btn-outline-secondary")">90d</a>
-        <a href="?days=365" class="btn @(Model.SelectedPeriodDays == 365 ? "btn-primary" : "btn-outline-secondary")">1y</a>
-        <a href="?days=0" class="btn @(Model.SelectedPeriodDays == 0 ? "btn-primary" : "btn-outline-secondary")">All</a>
+        <a href="?days=7" class="btn @(Model.SelectedPeriodDays == 7 ? "btn-meatpro" : "btn-outline-meatpro")">7d</a>
+        <a href="?days=30" class="btn @(Model.SelectedPeriodDays == 30 ? "btn-meatpro" : "btn-outline-meatpro")">30d</a>
+        <a href="?days=90" class="btn @(Model.SelectedPeriodDays == 90 ? "btn-meatpro" : "btn-outline-meatpro")">90d</a>
+        <a href="?days=365" class="btn @(Model.SelectedPeriodDays == 365 ? "btn-meatpro" : "btn-outline-meatpro")">1y</a>
+        <a href="?days=0" class="btn @(Model.SelectedPeriodDays == 0 ? "btn-meatpro" : "btn-outline-meatpro")">All</a>
     </div>
 </div>
 
@@ -18,22 +22,24 @@
     @foreach (var card in Model.MetricCards)
     {
         <div class="span-4 stat-card">
-            <div class="d-flex justify-content-between align-items-start gap-3">
-                <div>
-                    <div class="meta-label">@card.Title</div>
-                    <div class="stat-value fs-3 fw-bold mt-1">@card.Value</div>
-                    <div class="meta-label mt-1">@card.Caption</div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon flex-shrink-0"><i class="bi @card.Icon"></i></div>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="metric-caption">@card.Title</div>
                 </div>
-                <div class="stat-icon"><i class="bi @card.Icon"></i></div>
+                <div class="text-end flex-shrink-0">
+                    <div class="metric-value fs-3">@card.Value</div>
+                </div>
             </div>
+            <div class="metric-caption mt-1">@card.Caption</div>
         </div>
     }
 
     <div class="span-7 dashboard-chart">
         <div class="section-title">
             <div>
-                <div class="section-kicker text-dark">Production</div>
-                <h5 class="mb-0">Production output trend</h5>
+                <div class="section-kicker">Production</div>
+                <h5 class="mb-0 fw-semibold">Production output trend</h5>
             </div>
         </div>
         <div class="chart-wrap"><canvas id="productionOutputChart"></canvas></div>
@@ -42,8 +48,8 @@
     <div class="span-5 dashboard-chart">
         <div class="section-title">
             <div>
-                <div class="section-kicker text-dark">Inventory</div>
-                <h5 class="mb-0">Inventory movement</h5>
+                <div class="section-kicker">Inventory</div>
+                <h5 class="mb-0 fw-semibold">Inventory movement</h5>
             </div>
         </div>
         <div class="chart-wrap"><canvas id="inventoryMovementChart"></canvas></div>
@@ -52,8 +58,8 @@
     <div class="span-6 dashboard-chart">
         <div class="section-title">
             <div>
-                <div class="section-kicker text-dark">Products</div>
-                <h5 class="mb-0">Top produced products</h5>
+                <div class="section-kicker">Products</div>
+                <h5 class="mb-0 fw-semibold">Top produced products</h5>
             </div>
         </div>
         <div class="chart-wrap"><canvas id="topProductsChart"></canvas></div>
@@ -62,8 +68,8 @@
     <div class="span-6 dashboard-chart">
         <div class="section-title">
             <div>
-                <div class="section-kicker text-dark">Materials</div>
-                <h5 class="mb-0">Consumption analysis</h5>
+                <div class="section-kicker">Materials</div>
+                <h5 class="mb-0 fw-semibold">Consumption analysis</h5>
             </div>
         </div>
         <div class="chart-wrap"><canvas id="materialConsumptionChart"></canvas></div>
@@ -72,8 +78,8 @@
     <div class="span-12 dashboard-chart">
         <div class="section-title">
             <div>
-                <div class="section-kicker text-dark">Activity</div>
-                <h5 class="mb-0">Recent operations</h5>
+                <div class="section-kicker">Activity</div>
+                <h5 class="mb-0 fw-semibold">Recent operations</h5>
             </div>
         </div>
         <div class="activity-list">
@@ -81,12 +87,12 @@
             {
                 <div class="activity-item">
                     <div>
-                        <div class="fw-semibold">@item.Title</div>
-                        <small class="text-secondary">@item.Description</small>
+                        <div class="fw-semibold small">@item.Title</div>
+                        <span class="text-secondary" style="font-size:0.8rem;">@item.Description</span>
                     </div>
                     <div class="text-end">
-                        <span class="fw-semibold text-@item.BadgeTone">@item.Badge</span>
-                        <div class="meta-label mt-1">@item.TimeAgo</div>
+                        <span class="fw-semibold text-@item.BadgeTone small">@item.Badge</span>
+                        <div class="metric-caption mt-1">@item.TimeAgo</div>
                     </div>
                 </div>
             }
@@ -117,12 +123,18 @@
             }
         };
 
-        var chartColors = {
-            primary: '#6366f1',
+        var colors = {
+            primary: '#8b0000',
             success: '#22c55e',
-            warning: '#f59e0b',
+            warning: '#d4af37',
             danger: '#ef4444',
             info: '#06b6d4'
+        };
+
+        var baseOpts = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { usePointStyle: true, boxWidth: 8, padding: 16 } } }
         };
 
         new Chart(document.getElementById('productionOutputChart'), {
@@ -132,18 +144,16 @@
                 datasets: [{
                     label: 'Output',
                     data: data.production.values,
-                    backgroundColor: chartColors.primary + '33',
-                    borderColor: chartColors.primary,
+                    backgroundColor: colors.primary + '22',
+                    borderColor: colors.primary,
                     borderWidth: 2,
-                    borderRadius: 6
+                    borderRadius: 4
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+            options: Object.assign({}, baseOpts, {
                 plugins: { legend: { display: false } },
                 scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
-            }
+            })
         });
 
         new Chart(document.getElementById('inventoryMovementChart'), {
@@ -152,15 +162,13 @@
                 labels: data.inventory.labels,
                 datasets: [{
                     data: data.inventory.values,
-                    backgroundColor: [chartColors.success + 'cc', chartColors.danger + 'cc', chartColors.warning + 'cc', chartColors.info + 'cc'],
+                    backgroundColor: [colors.success + 'cc', colors.danger + 'cc', colors.warning + 'cc', colors.info + 'cc'],
                     borderWidth: 0
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+            options: Object.assign({}, baseOpts, {
                 plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16 } } }
-            }
+            })
         });
 
         new Chart(document.getElementById('topProductsChart'), {
@@ -170,19 +178,17 @@
                 datasets: [{
                     label: 'Units produced',
                     data: data.topProducts.values,
-                    backgroundColor: chartColors.success + '33',
-                    borderColor: chartColors.success,
+                    backgroundColor: colors.success + '22',
+                    borderColor: colors.success,
                     borderWidth: 2,
-                    borderRadius: 6
+                    borderRadius: 4
                 }]
             },
-            options: {
+            options: Object.assign({}, baseOpts, {
                 indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } }
-            }
+            })
         });
 
         new Chart(document.getElementById('materialConsumptionChart'), {
@@ -192,20 +198,18 @@
                 datasets: [{
                     label: 'Consumed',
                     data: data.consumption.values,
-                    backgroundColor: chartColors.warning + '33',
-                    borderColor: chartColors.warning,
+                    backgroundColor: colors.warning + '22',
+                    borderColor: colors.warning,
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 4
+                    pointRadius: 3
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+            options: Object.assign({}, baseOpts, {
                 plugins: { legend: { display: false } },
                 scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
-            }
+            })
         });
     })();
 </script>

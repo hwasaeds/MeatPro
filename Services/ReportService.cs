@@ -13,6 +13,8 @@ public interface IReportService
     Task<string> ExportInventoryCsvAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default);
     Task<string> ExportProductionCsvAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default);
     Task<string> ExportProcurementCsvAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default);
+    Task<SalesReportViewModel> BuildSalesReportAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default);
+    Task<string> ExportSalesCsvAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default);
 }
 
 public sealed class ReportService : IReportService
@@ -210,6 +212,70 @@ public sealed class ReportService : IReportService
         };
         lines.AddRange(report.Items.Select(x =>
             $"\"{x.PurchaseNumber}\",\"{x.SupplierName}\",\"{x.PurchasedOn:yyyy-MM-dd}\",{x.TotalAmount},\"{x.Status}\",\"{x.ReceivedOn?.ToString("yyyy-MM-dd") ?? ""}\""));
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    public async Task<SalesReportViewModel> BuildSalesReportAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default)
+    {
+        var cutoff = DateTime.UtcNow.AddDays(14);
+
+        var query = _context.FinishedGoods.AsNoTracking().Where(x => x.IsActive);
+
+        if (dateFrom.HasValue)
+            query = query.Where(x => x.CreatedAtUtc >= dateFrom.Value);
+
+        if (dateTo.HasValue)
+            query = query.Where(x => x.CreatedAtUtc <= dateTo.Value.AddDays(1));
+
+        var finishedGoods = await query.OrderByDescending(x => x.CreatedAtUtc).ToListAsync(cancellationToken);
+
+        var items = finishedGoods.Select(fg =>
+        {
+            var isLowStock = fg.CurrentStock <= fg.ReorderLevel;
+            var isExpiring = fg.ExpirationDate is not null && fg.ExpirationDate <= cutoff;
+            return new SalesReportItem
+            {
+                ProductName = fg.Name,
+                SKU = fg.SKU,
+                BatchNumber = fg.BatchNumber,
+                CurrentStock = fg.CurrentStock,
+                ReorderLevel = fg.ReorderLevel,
+                UnitPrice = fg.UnitPrice,
+                TotalValue = fg.CurrentStock * fg.UnitPrice,
+                StorageLocation = fg.StorageLocation,
+                ExpirationDate = fg.ExpirationDate,
+                Status = isExpiring ? "Expiring" : isLowStock ? "Low stock" : "Available"
+            };
+        }).ToList();
+
+        if (!string.IsNullOrWhiteSpace(statusFilter))
+        {
+            items = items.Where(x => x.Status.Equals(statusFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        return new SalesReportViewModel
+        {
+            DateFrom = dateFrom,
+            DateTo = dateTo,
+            StatusFilter = statusFilter,
+            TotalItems = items.Count,
+            TotalPotentialRevenue = items.Sum(x => x.TotalValue),
+            TotalStockQuantity = items.Sum(x => x.CurrentStock),
+            LowStockCount = items.Count(x => x.Status == "Low stock"),
+            ExpiringCount = items.Count(x => x.Status == "Expiring"),
+            Items = items
+        };
+    }
+
+    public async Task<string> ExportSalesCsvAsync(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default)
+    {
+        var report = await BuildSalesReportAsync(dateFrom, dateTo, statusFilter, cancellationToken);
+        var lines = new List<string>
+        {
+            "Product,SKU,Batch,Stock,Reorder,Unit Price,Total Value,Location,Expiration,Status"
+        };
+        lines.AddRange(report.Items.Select(x =>
+            $"\"{x.ProductName}\",\"{x.SKU}\",\"{x.BatchNumber}\",{x.CurrentStock},{x.ReorderLevel},{x.UnitPrice},{x.TotalValue},\"{x.StorageLocation}\",\"{x.ExpirationDate?.ToString("yyyy-MM-dd") ?? ""}\",\"{x.Status}\""));
         return string.Join(Environment.NewLine, lines);
     }
 }

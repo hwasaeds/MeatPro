@@ -6,35 +6,32 @@
 <div class="module-card">
     <div class="section-title align-items-start flex-column flex-md-row">
         <div>
-            <div class="section-kicker text-dark">Products</div>
-            <h1 class="h3 mb-1">Delete Product</h1>
-            <p class="text-secondary mb-0">This action removes the product definition permanently.</p>
+            <div class="section-kicker">Products</div>
+            <h1 class="h4 fw-bold mb-1">Delete Product</h1>
+            <p class="text-secondary mb-0" style="font-size:0.875rem;">This action removes the product definition permanently.</p>
         </div>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back to details</a>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-arrow-left me-1"></i>Back</a>
     </div>
 
-    <div class="alert alert-warning">
-        Deleting <strong>@Model.Name</strong> will remove the record permanently.
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-exclamation-triangle-fill"></i> Deleting <strong>@Model.Name</strong> will remove the record permanently.
     </div>
 
-    <div class="page-card p-3 mb-4">
-            <dl class="row mb-0">
-                <dt class="col-sm-4 text-secondary">SKU</dt>
-                <dd class="col-sm-8">@Model.SKU</dd>
-
-                <dt class="col-sm-4 text-secondary">Category</dt>
-                <dd class="col-sm-8">@Model.CategoryName</dd>
-
-                <dt class="col-sm-4 text-secondary">Selling Price</dt>
-                <dd class="col-sm-8">@Model.SellingPrice.ToString("'₱'#,##0.00")</dd>
-
-                <dt class="col-sm-4 text-secondary">Status</dt>
-                <dd class="col-sm-8"><span class="fw-semibold text-@Model.StatusTone">@Model.Status</span></dd>
-            </dl>
+    <div class="page-card p-4 mb-4">
+        <dl class="row mb-0" style="font-size:0.875rem;">
+            <dt class="col-sm-3 text-secondary">SKU</dt>
+            <dd class="col-sm-9">@Model.SKU</dd>
+            <dt class="col-sm-3 text-secondary">Category</dt>
+            <dd class="col-sm-9">@Model.CategoryName</dd>
+            <dt class="col-sm-3 text-secondary">Selling Price</dt>
+            <dd class="col-sm-9">@Model.SellingPrice.ToString("'₱'#,##0.00")</dd>
+            <dt class="col-sm-3 text-secondary">Status</dt>
+            <dd class="col-sm-9"><span class="fw-semibold text-@Model.StatusTone">@Model.Status</span></dd>
+        </dl>
     </div>
 
     <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex justify-content-center gap-2">
         <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-meatpro"><i class="bi bi-x-lg me-1"></i>Cancel</a>
-        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Delete Product</button>
+        <button type="submit" class="btn btn-meatpro"><i class="bi bi-trash me-1"></i>Delete Product</button>
     </form>
 </div>

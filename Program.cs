@@ -40,7 +40,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
 });
@@ -74,6 +74,7 @@ builder.Services.AddScoped<IAuditTrailService, AuditTrailService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AlertViewFilter>();
 
 builder.Services.AddAuthorization(options =>

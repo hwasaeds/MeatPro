@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json;
 using MeatPro.Data;
 using MeatPro.Models;
@@ -18,21 +19,27 @@ public interface IAuditTrailService
 public sealed class AuditTrailService : IAuditTrailService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuditTrailService(ApplicationDbContext context)
+    public AuditTrailService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task LogAsync(string module, string action, string entityName, string entityId, string? username, object? oldValues = null, object? newValues = null, string? ipAddress = null, CancellationToken cancellationToken = default)
     {
+        username ??= _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name)
+            ?? _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email)
+            ?? "system";
+
         var log = new AuditLog
         {
             Module = module,
             Action = action,
             EntityName = entityName,
             EntityId = entityId,
-            Username = username ?? "system",
+            Username = username,
             OldValues = oldValues is null ? null : JsonSerializer.Serialize(oldValues),
             NewValues = newValues is null ? null : JsonSerializer.Serialize(newValues),
             IpAddress = ipAddress
@@ -90,7 +97,7 @@ public sealed class AuditTrailService : IAuditTrailService
         if (fromDate.HasValue)
             query = query.Where(x => x.CreatedAtUtc >= fromDate.Value);
         if (toDate.HasValue)
-            query = query.Where(x => x.CreatedAtUtc <= toDate.Value);
+            query = query.Where(x => x.CreatedAtUtc < toDate.Value.Date.AddDays(1));
 
         return query;
     }

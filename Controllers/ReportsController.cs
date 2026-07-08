@@ -56,4 +56,16 @@ public sealed class ReportsController : Controller
         var csv = await _reportService.ExportProcurementCsvAsync(dateFrom, dateTo, statusFilter, cancellationToken);
         return File(Encoding.UTF8.GetBytes(csv), "text/csv", $"procurement-report-{DateTime.UtcNow:yyyyMMdd}.csv");
     }
+
+    public async Task<IActionResult> Sales(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default)
+    {
+        var model = await _reportService.BuildSalesReportAsync(dateFrom, dateTo, statusFilter, cancellationToken);
+        return View(model);
+    }
+
+    public async Task<IActionResult> ExportSalesCsv(DateTime? dateFrom, DateTime? dateTo, string? statusFilter, CancellationToken cancellationToken = default)
+    {
+        var csv = await _reportService.ExportSalesCsvAsync(dateFrom, dateTo, statusFilter, cancellationToken);
+        return File(Encoding.UTF8.GetBytes(csv), "text/csv", $"sales-report-{DateTime.UtcNow:yyyyMMdd}.csv");
+    }
 }
