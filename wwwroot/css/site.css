@@ -255,8 +255,8 @@ body.sidebar-collapsed .nav-group-title { text-align: center; font-size: 0.55rem
 .module-card { padding: 1.5rem; }
 .page-card { padding: 1.5rem; }
 .dashboard-chart { padding: 1.25rem; }
-.stat-card { padding: 1rem 1.15rem; }
-.metric-card { padding: 1rem 1.15rem; }
+.stat-card { padding: 1rem 1.15rem; display: flex; flex-direction: column; justify-content: center; }
+.metric-card { padding: 1rem 1.15rem; display: flex; flex-direction: column; justify-content: center; }
 
 .stat-icon {
   width: 40px;
@@ -351,7 +351,7 @@ body.sidebar-collapsed .nav-group-title { text-align: center; font-size: 0.55rem
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .form-control, .form-select {

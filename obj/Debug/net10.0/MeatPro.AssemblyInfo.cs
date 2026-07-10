@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MeatPro")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2b7080c6344270ac9dc29a9c065acc838cc4707")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b0d752cbaae5b2c250bf8c88cf316fb326d1545e")]
 [assembly: System.Reflection.AssemblyProductAttribute("MeatPro")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MeatPro")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

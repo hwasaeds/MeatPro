@@ -27,23 +27,31 @@
 
     <div class="dashboard-grid mb-4">
         <div class="span-3 stat-card">
-            <div class="metric-caption">Status</div>
-            <strong class="metric-value mt-1">@Model.Status</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="metric-caption">Status</span>
+                <strong class="metric-value">@Model.Status</strong>
+            </div>
             <div class="metric-caption mt-1">Current state</div>
         </div>
         <div class="span-3 stat-card">
-            <div class="metric-caption">Selling Price</div>
-            <strong class="metric-value mt-1">@Model.SellingPrice.ToString("'₱'#,##0.00")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="metric-caption">Selling Price</span>
+                <strong class="metric-value">@Model.SellingPrice.ToString("'₱'#,##0.00")</strong>
+            </div>
             <div class="metric-caption mt-1">Per unit</div>
         </div>
         <div class="span-3 stat-card">
-            <div class="metric-caption">Standard Yield</div>
-            <strong class="metric-value mt-1">@Model.StandardYield.ToString("P")</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="metric-caption">Standard Yield</span>
+                <strong class="metric-value">@Model.StandardYield.ToString("P")</strong>
+            </div>
             <div class="metric-caption mt-1">Production efficiency</div>
         </div>
         <div class="span-3 stat-card">
-            <div class="metric-caption">UoM</div>
-            <strong class="metric-value mt-1">@Model.UnitOfMeasure</strong>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="metric-caption">UoM</span>
+                <strong class="metric-value">@Model.UnitOfMeasure</strong>
+            </div>
             <div class="metric-caption mt-1">Unit of measure</div>
         </div>
     </div>
