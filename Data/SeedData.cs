@@ -192,10 +192,10 @@ public static class SeedData
             var prod8 = await GetOrThrow(context.Products.FirstOrDefaultAsync(p => p.SKU == "PRD-008"), "PRD-008");
 
             context.AddRange(
-                new ProductionPlan { PlanCode = "PLAN-2026-001", ProductId = prod1.Id, PlannedQuantity = 500, StartDate = DateTime.UtcNow.Date.AddDays(-3), EndDate = DateTime.UtcNow.Date.AddDays(4), Status = ProductionPlanStatus.InProgress, CreatedByUser = adminEmail, Notes = "Priority plan for retail contract" },
-                new ProductionPlan { PlanCode = "PLAN-2026-002", ProductId = prod5.Id, PlannedQuantity = 1000, StartDate = DateTime.UtcNow.Date.AddDays(-1), EndDate = DateTime.UtcNow.Date.AddDays(9), Status = ProductionPlanStatus.Approved, CreatedByUser = adminEmail, Notes = "High-volume nugget run for Q3" },
+                new ProductionPlan { PlanCode = "PLAN-2026-001", ProductId = prod1.Id, PlannedQuantity = 500, StartDate = DateTime.UtcNow.Date.AddDays(-15), EndDate = DateTime.UtcNow.Date.AddDays(-8), Status = ProductionPlanStatus.Completed, CreatedByUser = adminEmail, Notes = "Priority plan for retail contract" },
+                new ProductionPlan { PlanCode = "PLAN-2026-002", ProductId = prod5.Id, PlannedQuantity = 1000, StartDate = DateTime.UtcNow.Date.AddDays(-3), EndDate = DateTime.UtcNow.Date.AddDays(7), Status = ProductionPlanStatus.Approved, CreatedByUser = adminEmail, Notes = "High-volume nugget run for Q3" },
                 new ProductionPlan { PlanCode = "PLAN-2026-003", ProductId = prod7.Id, PlannedQuantity = 200, StartDate = DateTime.UtcNow.Date.AddDays(5), EndDate = DateTime.UtcNow.Date.AddDays(12), Status = ProductionPlanStatus.Draft, CreatedByUser = prodEmail, Notes = "Holiday ham batch — pending ingredient confirmation" },
-                new ProductionPlan { PlanCode = "PLAN-2026-004", ProductId = prod8.Id, PlannedQuantity = 600, StartDate = DateTime.UtcNow.Date.AddDays(-7), EndDate = DateTime.UtcNow.Date, Status = ProductionPlanStatus.Completed, CreatedByUser = prodEmail, Notes = "Completed satay run for food service" }
+                new ProductionPlan { PlanCode = "PLAN-2026-004", ProductId = prod8.Id, PlannedQuantity = 600, StartDate = DateTime.UtcNow.Date.AddDays(-60), EndDate = DateTime.UtcNow.Date.AddDays(-45), Status = ProductionPlanStatus.Completed, CreatedByUser = prodEmail, Notes = "Completed satay run for food service" }
             );
             await context.SaveChangesAsync();
         });
@@ -208,11 +208,11 @@ public static class SeedData
             var plan4 = await GetOrThrow(context.ProductionPlans.FirstOrDefaultAsync(p => p.PlanCode == "PLAN-2026-004"), "PLAN-2026-004");
 
             context.AddRange(
-                new WorkOrder { WorkOrderNumber = "WO-2026-001", ProductionPlanId = plan1.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-2), Quantity = 250, Status = WorkOrderStatus.InProgress, AssignedTo = "Production Line 1", OutputQuantity = 180, Notes = "First run in progress — sausage links" },
-                new WorkOrder { WorkOrderNumber = "WO-2026-002", ProductionPlanId = plan1.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(1), Quantity = 250, Status = WorkOrderStatus.Planned, AssignedTo = "Production Line 1", OutputQuantity = 0, Notes = "Second run — awaiting casing delivery" },
+                new WorkOrder { WorkOrderNumber = "WO-2026-001", ProductionPlanId = plan1.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-12), Quantity = 250, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 1", OutputQuantity = 240, Notes = "First sausage run — completed" },
+                new WorkOrder { WorkOrderNumber = "WO-2026-002", ProductionPlanId = plan1.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-8), Quantity = 250, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 1", OutputQuantity = 235, Notes = "Second sausage run — all quality checks passed" },
                 new WorkOrder { WorkOrderNumber = "WO-2026-003", ProductionPlanId = plan2.Id, ScheduledDate = DateTime.UtcNow.Date, Quantity = 500, Status = WorkOrderStatus.Draft, AssignedTo = "Production Line 2", OutputQuantity = 0, Notes = "First nugget batch — calibrating breading line" },
-                new WorkOrder { WorkOrderNumber = "WO-2026-004", ProductionPlanId = plan4.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-6), Quantity = 300, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 3", OutputQuantity = 285, Notes = "Satay run completed ahead of schedule" },
-                new WorkOrder { WorkOrderNumber = "WO-2026-005", ProductionPlanId = plan4.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-4), Quantity = 300, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 3", OutputQuantity = 290, Notes = "Second satay run — all quality checks passed" },
+                new WorkOrder { WorkOrderNumber = "WO-2026-004", ProductionPlanId = plan4.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-55), Quantity = 300, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 3", OutputQuantity = 285, Notes = "Satay run completed ahead of schedule" },
+                new WorkOrder { WorkOrderNumber = "WO-2026-005", ProductionPlanId = plan4.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(-48), Quantity = 300, Status = WorkOrderStatus.Completed, AssignedTo = "Production Line 3", OutputQuantity = 290, Notes = "Second satay run — all quality checks passed" },
                 new WorkOrder { WorkOrderNumber = "WO-2026-006", ProductionPlanId = plan2.Id, ScheduledDate = DateTime.UtcNow.Date.AddDays(3), Quantity = 500, Status = WorkOrderStatus.Planned, AssignedTo = "Production Line 2", OutputQuantity = 0, Notes = "Second nugget batch — freezer space confirmed" }
             );
             await context.SaveChangesAsync();
@@ -228,10 +228,11 @@ public static class SeedData
             var wo5 = await GetOrThrow(context.WorkOrders.FirstOrDefaultAsync(w => w.WorkOrderNumber == "WO-2026-005"), "WO-2026-005");
 
             context.AddRange(
-                new ProductionBatch { BatchNumber = "BATCH-2026-0001", WorkOrderId = wo1.Id, ProductId = prod1.Id, TraceabilityCode = "TRACE-2026-0001", RawMaterialConsumed = 220, ProducedQuantity = 180, ProducedAt = DateTime.UtcNow.AddHours(-6), ExpirationDate = DateTime.UtcNow.AddDays(45), Notes = "Sausage batch — grade A quality" },
-                new ProductionBatch { BatchNumber = "BATCH-2026-0002", WorkOrderId = wo4.Id, ProductId = prod8.Id, TraceabilityCode = "TRACE-2026-0002", RawMaterialConsumed = 200, ProducedQuantity = 285, ProducedAt = DateTime.UtcNow.AddDays(-6), ExpirationDate = DateTime.UtcNow.AddDays(14), Notes = "Satay batch — food service spec" },
-                new ProductionBatch { BatchNumber = "BATCH-2026-0003", WorkOrderId = wo5.Id, ProductId = prod8.Id, TraceabilityCode = "TRACE-2026-0003", RawMaterialConsumed = 195, ProducedQuantity = 290, ProducedAt = DateTime.UtcNow.AddDays(-4), ExpirationDate = DateTime.UtcNow.AddDays(14), Notes = "Satay batch — retail spec" },
-                new ProductionBatch { BatchNumber = "BATCH-2026-0004", WorkOrderId = wo1.Id, ProductId = prod1.Id, TraceabilityCode = "TRACE-2026-0004", RawMaterialConsumed = 40, ProducedQuantity = 0, ProducedAt = DateTime.UtcNow.AddHours(-2), ExpirationDate = DateTime.UtcNow.AddDays(44), Notes = "Sausage batch — QC on hold" }
+                new ProductionBatch { BatchNumber = "BATCH-2026-0001", WorkOrderId = wo4.Id, ProductId = prod8.Id, TraceabilityCode = "TRACE-2026-0001", RawMaterialConsumed = 200, ProducedQuantity = 285, ProducedAt = DateTime.UtcNow.AddDays(-55), ExpirationDate = DateTime.UtcNow.AddDays(-21), Notes = "Satay batch — food service spec" },
+                new ProductionBatch { BatchNumber = "BATCH-2026-0002", WorkOrderId = wo5.Id, ProductId = prod8.Id, TraceabilityCode = "TRACE-2026-0002", RawMaterialConsumed = 195, ProducedQuantity = 290, ProducedAt = DateTime.UtcNow.AddDays(-48), ExpirationDate = DateTime.UtcNow.AddDays(-14), Notes = "Satay batch — retail spec" },
+                new ProductionBatch { BatchNumber = "BATCH-2026-0003", WorkOrderId = wo1.Id, ProductId = prod1.Id, TraceabilityCode = "TRACE-2026-0003", RawMaterialConsumed = 220, ProducedQuantity = 240, ProducedAt = DateTime.UtcNow.AddDays(-12), ExpirationDate = DateTime.UtcNow.AddDays(33), Notes = "Sausage batch — grade A quality" },
+                new ProductionBatch { BatchNumber = "BATCH-2026-0004", WorkOrderId = wo1.Id, ProductId = prod1.Id, TraceabilityCode = "TRACE-2026-0004", RawMaterialConsumed = 180, ProducedQuantity = 235, ProducedAt = DateTime.UtcNow.AddDays(-8), ExpirationDate = DateTime.UtcNow.AddDays(37), Notes = "Sausage batch — second run" },
+                new ProductionBatch { BatchNumber = "BATCH-2026-0005", WorkOrderId = wo1.Id, ProductId = prod1.Id, TraceabilityCode = "TRACE-2026-0005", RawMaterialConsumed = 40, ProducedQuantity = 0, ProducedAt = DateTime.UtcNow.AddHours(-2), ExpirationDate = DateTime.UtcNow.AddDays(44), Notes = "Sausage batch — QC on hold" }
             );
             await context.SaveChangesAsync();
         });
@@ -246,11 +247,16 @@ public static class SeedData
             var sup5 = await GetOrThrow(context.Suppliers.FirstOrDefaultAsync(s => s.Name == "FlavorCraft Inc"), "FlavorCraft Inc");
 
             context.AddRange(
-                new PurchaseTransaction { PurchaseNumber = "PO-2026-0001", SupplierId = sup1.Id, PurchasedOn = DateTime.UtcNow.AddDays(-5), Status = PurchaseStatus.Received, TotalAmount = 4250m, ReceivedOn = DateTime.UtcNow.AddDays(-3), Notes = "Weekly beef procurement" },
-                new PurchaseTransaction { PurchaseNumber = "PO-2026-0002", SupplierId = sup2.Id, PurchasedOn = DateTime.UtcNow.AddDays(-4), Status = PurchaseStatus.Received, TotalAmount = 3100m, ReceivedOn = DateTime.UtcNow.AddDays(-2), Notes = "Chicken breast order" },
-                new PurchaseTransaction { PurchaseNumber = "PO-2026-0003", SupplierId = sup3.Id, PurchasedOn = DateTime.UtcNow.AddDays(-2), Status = PurchaseStatus.PartiallyReceived, TotalAmount = 5800m, ReceivedOn = DateTime.UtcNow.AddDays(-1), Notes = "Pork belly blocks — partial delivery" },
-                new PurchaseTransaction { PurchaseNumber = "PO-2026-0004", SupplierId = sup4.Id, PurchasedOn = DateTime.UtcNow.AddDays(-1), Status = PurchaseStatus.Ordered, TotalAmount = 1025m, ReceivedOn = null, Notes = "Spice mix and salt cure restock" },
-                new PurchaseTransaction { PurchaseNumber = "PO-2026-0005", SupplierId = sup5.Id, PurchasedOn = DateTime.UtcNow, Status = PurchaseStatus.Draft, TotalAmount = 1680m, ReceivedOn = null, Notes = "Honey glaze & BBQ sauce — awaiting approval" }
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0001", SupplierId = sup1.Id, PurchasedOn = DateTime.UtcNow.AddDays(-150), Status = PurchaseStatus.Received, TotalAmount = 4250m, ReceivedOn = DateTime.UtcNow.AddDays(-147), Notes = "Monthly beef procurement — January" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0002", SupplierId = sup2.Id, PurchasedOn = DateTime.UtcNow.AddDays(-120), Status = PurchaseStatus.Received, TotalAmount = 3100m, ReceivedOn = DateTime.UtcNow.AddDays(-118), Notes = "Chicken breast order — February" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0003", SupplierId = sup3.Id, PurchasedOn = DateTime.UtcNow.AddDays(-90), Status = PurchaseStatus.Received, TotalAmount = 5800m, ReceivedOn = DateTime.UtcNow.AddDays(-87), Notes = "Pork belly blocks — March" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0004", SupplierId = sup4.Id, PurchasedOn = DateTime.UtcNow.AddDays(-60), Status = PurchaseStatus.Received, TotalAmount = 1025m, ReceivedOn = DateTime.UtcNow.AddDays(-58), Notes = "Spice mix and salt cure — April" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0005", SupplierId = sup5.Id, PurchasedOn = DateTime.UtcNow.AddDays(-45), Status = PurchaseStatus.Received, TotalAmount = 1680m, ReceivedOn = DateTime.UtcNow.AddDays(-43), Notes = "Honey glaze & BBQ sauce — mid-April" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0006", SupplierId = sup1.Id, PurchasedOn = DateTime.UtcNow.AddDays(-30), Status = PurchaseStatus.Received, TotalAmount = 5100m, ReceivedOn = DateTime.UtcNow.AddDays(-28), Notes = "Beef trim restock — May" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0007", SupplierId = sup2.Id, PurchasedOn = DateTime.UtcNow.AddDays(-20), Status = PurchaseStatus.Received, TotalAmount = 2800m, ReceivedOn = DateTime.UtcNow.AddDays(-18), Notes = "Chicken breast — late May" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0008", SupplierId = sup3.Id, PurchasedOn = DateTime.UtcNow.AddDays(-10), Status = PurchaseStatus.PartiallyReceived, TotalAmount = 6200m, ReceivedOn = DateTime.UtcNow.AddDays(-8), Notes = "Pork belly — June partial" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0009", SupplierId = sup4.Id, PurchasedOn = DateTime.UtcNow.AddDays(-5), Status = PurchaseStatus.Ordered, TotalAmount = 1350m, ReceivedOn = null, Notes = "Spice mix restock — pending" },
+                new PurchaseTransaction { PurchaseNumber = "PO-2026-0010", SupplierId = sup5.Id, PurchasedOn = DateTime.UtcNow, Status = PurchaseStatus.Draft, TotalAmount = 1680m, ReceivedOn = null, Notes = "Honey glaze & BBQ sauce — awaiting approval" }
             );
             await context.SaveChangesAsync();
         });
@@ -261,29 +267,47 @@ public static class SeedData
             var raw1 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-001");
             var raw2 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-002");
             var raw3 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-003");
+            var raw4 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-004");
             var raw5 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-005");
             var raw6 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-006");
             var raw7 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-007");
             var raw8 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-008");
+            var raw11 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-011");
+            var raw12 = await context.RawMaterials.FirstAsync(r => r.SKU == "RM-012");
+            var fg1 = await context.FinishedGoods.FirstAsync(f => f.SKU == "FG-001");
             var fg2 = await context.FinishedGoods.FirstAsync(f => f.SKU == "FG-002");
             var fg4 = await context.FinishedGoods.FirstAsync(f => f.SKU == "FG-004");
+            var fg5 = await context.FinishedGoods.FirstAsync(f => f.SKU == "FG-005");
+            var fg8 = await context.FinishedGoods.FirstAsync(f => f.SKU == "FG-008");
             var po1 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0001");
             var po2 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0002");
+            var po3 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0003");
+            var po4 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0004");
             var po5 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0005");
-            var wo1 = await context.WorkOrders.FirstAsync(w => w.WorkOrderNumber == "WO-2026-001");
-            var wo3 = await context.WorkOrders.FirstAsync(w => w.WorkOrderNumber == "WO-2026-003");
+            var po6 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0006");
+            var po7 = await context.PurchaseTransactions.FirstAsync(p => p.PurchaseNumber == "PO-2026-0007");
 
             context.AddRange(
-                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 800, UnitCost = 4.2m, ReferenceNumber = po1.PurchaseNumber, Notes = "Goods received — beef trim", MovementDate = DateTime.UtcNow.AddDays(-3), PerformedBy = adminEmail },
-                new StockMovement { ItemName = raw2.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 500, UnitCost = 3.0m, ReferenceNumber = po2.PurchaseNumber, Notes = "Goods received — chicken breast", MovementDate = DateTime.UtcNow.AddDays(-2), PerformedBy = invEmail },
-                new StockMovement { ItemName = raw3.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 12, UnitCost = 10.2m, ReferenceNumber = wo1.WorkOrderNumber, Notes = "Materials released for sausage run", MovementDate = DateTime.UtcNow.AddHours(-8), PerformedBy = prodEmail },
-                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 220, UnitCost = 4.3m, ReferenceNumber = wo1.WorkOrderNumber, Notes = "Beef trim to Line 1", MovementDate = DateTime.UtcNow.AddHours(-8), PerformedBy = prodEmail },
-                new StockMovement { ItemName = raw8.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 300, UnitCost = 2.7m, ReferenceNumber = po2.PurchaseNumber, Notes = "Chicken thigh received", MovementDate = DateTime.UtcNow.AddDays(-2), PerformedBy = invEmail },
-                new StockMovement { ItemName = raw5.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 50, UnitCost = 2.5m, ReferenceNumber = wo3.WorkOrderNumber, Notes = "Breadcrumbs to Line 2", MovementDate = DateTime.UtcNow.AddHours(-4), PerformedBy = prodEmail },
-                new StockMovement { ItemName = raw7.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 100, UnitCost = 8.5m, ReferenceNumber = po5.PurchaseNumber, Notes = "Honey glaze stocked", MovementDate = DateTime.UtcNow, PerformedBy = invEmail },
-                new StockMovement { ItemName = fg4.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 20, UnitCost = 10.5m, ReferenceNumber = "SALE-001", Notes = "Wholesale order — Pork Belly", MovementDate = DateTime.UtcNow.AddDays(-1), PerformedBy = invEmail },
-                new StockMovement { ItemName = fg2.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 30, UnitCost = 7.8m, ReferenceNumber = "SALE-002", Notes = "Retail store delivery", MovementDate = DateTime.UtcNow.AddHours(-12), PerformedBy = invEmail },
-                new StockMovement { ItemName = raw6.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.Adjustment, Quantity = -3, UnitCost = 45.0m, ReferenceNumber = "ADJ-001", Notes = "Damaged roll written off", MovementDate = DateTime.UtcNow.AddDays(-5), PerformedBy = adminEmail }
+                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 800, UnitCost = 4.2m, ReferenceNumber = po1.PurchaseNumber, Notes = "Goods received — beef trim (Jan)", MovementDate = DateTime.UtcNow.AddDays(-147), PerformedBy = adminEmail },
+                new StockMovement { ItemName = raw2.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 500, UnitCost = 3.0m, ReferenceNumber = po2.PurchaseNumber, Notes = "Goods received — chicken breast (Feb)", MovementDate = DateTime.UtcNow.AddDays(-118), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw3.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 25, UnitCost = 10.2m, ReferenceNumber = "WO-2026-004", Notes = "Spice mix released for satay run (Mar)", MovementDate = DateTime.UtcNow.AddDays(-55), PerformedBy = prodEmail },
+                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 220, UnitCost = 4.3m, ReferenceNumber = "WO-2026-001", Notes = "Beef trim to Line 1 (Jun)", MovementDate = DateTime.UtcNow.AddDays(-12), PerformedBy = prodEmail },
+                new StockMovement { ItemName = raw8.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 300, UnitCost = 2.7m, ReferenceNumber = po3.PurchaseNumber, Notes = "Chicken thigh received (Mar)", MovementDate = DateTime.UtcNow.AddDays(-87), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw5.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 50, UnitCost = 2.5m, ReferenceNumber = "WO-2026-003", Notes = "Breadcrumbs to Line 2 (May)", MovementDate = DateTime.UtcNow.AddDays(-20), PerformedBy = prodEmail },
+                new StockMovement { ItemName = raw7.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 100, UnitCost = 8.5m, ReferenceNumber = po5.PurchaseNumber, Notes = "Honey glaze stocked (mid-Apr)", MovementDate = DateTime.UtcNow.AddDays(-43), PerformedBy = invEmail },
+                new StockMovement { ItemName = fg4.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 20, UnitCost = 10.5m, ReferenceNumber = "SALE-001", Notes = "Wholesale order — Pork Belly (Feb)", MovementDate = DateTime.UtcNow.AddDays(-110), PerformedBy = invEmail },
+                new StockMovement { ItemName = fg2.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 30, UnitCost = 7.8m, ReferenceNumber = "SALE-002", Notes = "Retail store delivery (Apr)", MovementDate = DateTime.UtcNow.AddDays(-50), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw6.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.Adjustment, Quantity = -3, UnitCost = 45.0m, ReferenceNumber = "ADJ-001", Notes = "Damaged roll written off (Jan)", MovementDate = DateTime.UtcNow.AddDays(-140), PerformedBy = adminEmail },
+                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 600, UnitCost = 4.3m, ReferenceNumber = po6.PurchaseNumber, Notes = "Beef trim restock (May)", MovementDate = DateTime.UtcNow.AddDays(-28), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw2.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 400, UnitCost = 3.1m, ReferenceNumber = po7.PurchaseNumber, Notes = "Chicken breast late May", MovementDate = DateTime.UtcNow.AddDays(-18), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw4.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 500, UnitCost = 5.6m, ReferenceNumber = po3.PurchaseNumber, Notes = "Pork belly received (Mar)", MovementDate = DateTime.UtcNow.AddDays(-87), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw1.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 180, UnitCost = 4.3m, ReferenceNumber = "WO-2026-001", Notes = "Beef trim for sausage batch (Jun)", MovementDate = DateTime.UtcNow.AddDays(-12), PerformedBy = prodEmail },
+                new StockMovement { ItemName = raw8.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.ReleaseToProduction, Quantity = 150, UnitCost = 2.8m, ReferenceNumber = "WO-2026-005", Notes = "Chicken thigh for satay (Apr)", MovementDate = DateTime.UtcNow.AddDays(-48), PerformedBy = prodEmail },
+                new StockMovement { ItemName = fg1.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 40, UnitCost = 6.95m, ReferenceNumber = "SALE-003", Notes = "Wholesale sausage order (Jun)", MovementDate = DateTime.UtcNow.AddDays(-5), PerformedBy = invEmail },
+                new StockMovement { ItemName = fg5.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 25, UnitCost = 5.5m, ReferenceNumber = "SALE-004", Notes = "Nugget retail shipment (May)", MovementDate = DateTime.UtcNow.AddDays(-22), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw11.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 40, UnitCost = 5.75m, ReferenceNumber = po4.PurchaseNumber, Notes = "Salt cure received (Apr)", MovementDate = DateTime.UtcNow.AddDays(-58), PerformedBy = invEmail },
+                new StockMovement { ItemName = raw12.Name, ItemType = "Raw Material", MovementType = InventoryMovementType.StockIn, Quantity = 80, UnitCost = 4.2m, ReferenceNumber = po5.PurchaseNumber, Notes = "BBQ sauce stocked (mid-Apr)", MovementDate = DateTime.UtcNow.AddDays(-43), PerformedBy = invEmail },
+                new StockMovement { ItemName = fg8.Name, ItemType = "Finished Good", MovementType = InventoryMovementType.StockOut, Quantity = 15, UnitCost = 16.5m, ReferenceNumber = "SALE-005", Notes = "Ribeye restaurant order (May)", MovementDate = DateTime.UtcNow.AddDays(-35), PerformedBy = invEmail }
             );
             await context.SaveChangesAsync();
         });
@@ -306,11 +330,14 @@ public static class SeedData
         await SeedIfEmptyAsync(context, context.AuditLogs, async () =>
         {
             context.AddRange(
-                new AuditLog { Module = "Products", Action = "Create", EntityName = "Product", EntityId = "PRD-001", Username = adminEmail, NewValues = "{\"Name\":\"Premium Beef Sausage\",\"SKU\":\"PRD-001\"}", IpAddress = "127.0.0.1" },
-                new AuditLog { Module = "Raw Materials", Action = "Stock In", EntityName = "RawMaterial", EntityId = "RM-001", Username = invEmail, NewValues = "{\"Quantity\":800,\"Reference\":\"PO-2026-0001\"}", IpAddress = "127.0.0.1" },
-                new AuditLog { Module = "Production", Action = "Create", EntityName = "ProductionPlan", EntityId = "PLAN-2026-001", Username = adminEmail, NewValues = "{\"PlanCode\":\"PLAN-2026-001\",\"Status\":\"InProgress\"}", IpAddress = "127.0.0.1" },
-                new AuditLog { Module = "Procurement", Action = "Create", EntityName = "PurchaseTransaction", EntityId = "PO-2026-0003", Username = procEmail, NewValues = "{\"PurchaseNumber\":\"PO-2026-0003\",\"TotalAmount\":5800}", IpAddress = "127.0.0.1" },
-                new AuditLog { Module = "Inventory", Action = "Adjustment", EntityName = "RawMaterial", EntityId = "RM-006", Username = adminEmail, NewValues = "{\"Delta\":-3,\"Reason\":\"Damaged\"}", IpAddress = "127.0.0.1" }
+                new AuditLog { Module = "Products", Action = "Create", EntityName = "Product", EntityId = "PRD-001", Username = adminEmail, NewValues = "{\"Name\":\"Premium Beef Sausage\",\"SKU\":\"PRD-001\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-150) },
+                new AuditLog { Module = "Raw Materials", Action = "Stock In", EntityName = "RawMaterial", EntityId = "RM-001", Username = invEmail, NewValues = "{\"Quantity\":800,\"Reference\":\"PO-2026-0001\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-147) },
+                new AuditLog { Module = "Production", Action = "Create", EntityName = "ProductionPlan", EntityId = "PLAN-2026-004", Username = prodEmail, NewValues = "{\"PlanCode\":\"PLAN-2026-004\",\"Status\":\"Completed\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-60) },
+                new AuditLog { Module = "Procurement", Action = "Create", EntityName = "PurchaseTransaction", EntityId = "PO-2026-0003", Username = procEmail, NewValues = "{\"PurchaseNumber\":\"PO-2026-0003\",\"TotalAmount\":5800}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-90) },
+                new AuditLog { Module = "Inventory", Action = "Adjustment", EntityName = "RawMaterial", EntityId = "RM-006", Username = adminEmail, NewValues = "{\"Delta\":-3,\"Reason\":\"Damaged\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-140) },
+                new AuditLog { Module = "Production", Action = "Create", EntityName = "ProductionPlan", EntityId = "PLAN-2026-001", Username = adminEmail, NewValues = "{\"PlanCode\":\"PLAN-2026-001\",\"Status\":\"Completed\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-15) },
+                new AuditLog { Module = "Procurement", Action = "Receive", EntityName = "PurchaseTransaction", EntityId = "PO-2026-0006", Username = procEmail, NewValues = "{\"PurchaseNumber\":\"PO-2026-0006\",\"Status\":\"Received\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-28) },
+                new AuditLog { Module = "Raw Materials", Action = "Stock In", EntityName = "RawMaterial", EntityId = "RM-002", Username = invEmail, NewValues = "{\"Quantity\":400,\"Reference\":\"PO-2026-0007\"}", IpAddress = "127.0.0.1", CreatedAtUtc = DateTime.UtcNow.AddDays(-18) }
             );
             await context.SaveChangesAsync();
         });

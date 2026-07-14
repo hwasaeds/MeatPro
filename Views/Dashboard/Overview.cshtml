@@ -4,18 +4,19 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div>
         <div class="section-kicker">Overview</div>
         <h1 class="h4 fw-bold mb-0 mt-1">Dashboard</h1>
     </div>
-    <div class="btn-group btn-group-sm" role="group">
-        <a href="?days=7" class="btn @(Model.SelectedPeriodDays == 7 ? "btn-meatpro" : "btn-outline-meatpro")">7d</a>
-        <a href="?days=30" class="btn @(Model.SelectedPeriodDays == 30 ? "btn-meatpro" : "btn-outline-meatpro")">30d</a>
-        <a href="?days=90" class="btn @(Model.SelectedPeriodDays == 90 ? "btn-meatpro" : "btn-outline-meatpro")">90d</a>
-        <a href="?days=365" class="btn @(Model.SelectedPeriodDays == 365 ? "btn-meatpro" : "btn-outline-meatpro")">1y</a>
-        <a href="?days=0" class="btn @(Model.SelectedPeriodDays == 0 ? "btn-meatpro" : "btn-outline-meatpro")">All</a>
-    </div>
+    <form method="get" asp-controller="Dashboard" asp-action="Index" class="d-flex align-items-center gap-2 flex-wrap">
+        <label class="text-secondary small mb-0">From</label>
+        <input type="date" name="fromDate" class="form-control form-control-sm" value="@Model.FromDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
+        <label class="text-secondary small mb-0">To</label>
+        <input type="date" name="toDate" class="form-control form-control-sm" value="@Model.ToDate?.ToString("yyyy-MM-dd")" style="max-width:160px" />
+        <button type="submit" class="btn btn-sm btn-outline-meatpro">Filter</button>
+        <a asp-action="Index" class="btn btn-sm btn-outline-meatpro">Reset</a>
+    </form>
 </div>
 
 <div class="dashboard-grid">

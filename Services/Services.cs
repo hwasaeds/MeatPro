@@ -9,7 +9,7 @@ namespace MeatPro.Services;
 
 public interface IDashboardService
 {
-    Task<DashboardViewModel> BuildAsync(int days = 30, CancellationToken cancellationToken = default);
+    Task<DashboardViewModel> BuildAsync(DateTime? fromDate = null, DateTime? toDate = null, CancellationToken cancellationToken = default);
 }
 
 public interface IInventoryService
@@ -65,39 +65,47 @@ public sealed class DashboardService : IDashboardService
         _context = context;
     }
 
-    public async Task<DashboardViewModel> BuildAsync(int days = 30, CancellationToken cancellationToken = default)
+    public async Task<DashboardViewModel> BuildAsync(DateTime? fromDate = null, DateTime? toDate = null, CancellationToken cancellationToken = default)
     {
-        var dateFrom = days > 0 ? DateTime.UtcNow.AddDays(-days) : (DateTime?)null;
+        var dateFrom = fromDate.HasValue ? DateTime.SpecifyKind(fromDate.Value, DateTimeKind.Utc) : (DateTime?)null;
+        var dateTo = toDate.HasValue ? DateTime.SpecifyKind(toDate.Value.AddDays(1).AddTicks(-1), DateTimeKind.Utc) : (DateTime?)null;
 
         var rawMaterials = await _context.RawMaterials.AsNoTracking().ToListAsync(cancellationToken);
         var workOrders = await _context.WorkOrders.AsNoTracking().ToListAsync(cancellationToken);
         var finishedGoods = await _context.FinishedGoods.AsNoTracking().ToListAsync(cancellationToken);
         var suppliers = await _context.Suppliers.AsNoTracking().ToListAsync(cancellationToken);
 
-        var batches = dateFrom.HasValue
-            ? await _context.ProductionBatches.AsNoTracking().Where(b => b.ProducedAt >= dateFrom.Value).ToListAsync(cancellationToken)
-            : await _context.ProductionBatches.AsNoTracking().ToListAsync(cancellationToken);
+        var batches = await _context.ProductionBatches.AsNoTracking()
+            .Where(b => (!dateFrom.HasValue || b.ProducedAt >= dateFrom.Value) && (!dateTo.HasValue || b.ProducedAt <= dateTo.Value))
+            .ToListAsync(cancellationToken);
 
-        var movements = dateFrom.HasValue
-            ? await _context.StockMovements.AsNoTracking().Where(m => m.MovementDate >= dateFrom.Value).ToListAsync(cancellationToken)
-            : await _context.StockMovements.AsNoTracking().ToListAsync(cancellationToken);
+        var movements = await _context.StockMovements.AsNoTracking()
+            .Where(m => (!dateFrom.HasValue || m.MovementDate >= dateFrom.Value) && (!dateTo.HasValue || m.MovementDate <= dateTo.Value))
+            .ToListAsync(cancellationToken);
 
         var products = await _context.Products.AsNoTracking().ToListAsync(cancellationToken);
 
-        var purchases = dateFrom.HasValue
-            ? await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier).Where(p => p.PurchasedOn >= dateFrom.Value).ToListAsync(cancellationToken)
-            : await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier).ToListAsync(cancellationToken);
+        var purchases = await _context.PurchaseTransactions.AsNoTracking().Include(x => x.Supplier)
+            .Where(p => (!dateFrom.HasValue || p.PurchasedOn >= dateFrom.Value) && (!dateTo.HasValue || p.PurchasedOn <= dateTo.Value))
+            .ToListAsync(cancellationToken);
 
-        var periodLabel = days switch { 7 => "7 days", 30 => "30 days", 90 => "90 days", 365 => "1 year", _ => "All time" };
+        var periodLabel = (dateFrom, dateTo) switch
+        {
+            (null, null) => "All time",
+            (not null, not null) => $"{dateFrom.Value:MMM dd, yyyy} – {dateTo.Value:MMM dd, yyyy}",
+            (not null, _) => $"From {dateFrom.Value:MMM dd, yyyy}",
+            (_, not null) => $"Until {dateTo.Value:MMM dd, yyyy}"
+        };
 
         var dashboard = new DashboardViewModel
         {
-            SelectedPeriodDays = days,
+            FromDate = fromDate,
+            ToDate = toDate,
             TotalRawMaterials = rawMaterials.Count,
             LowStockMaterials = rawMaterials.Count(x => x.CurrentStock <= x.ReorderLevel),
             ActiveWorkOrders = workOrders.Count(x => x.Status is WorkOrderStatus.Planned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold),
             FinishedGoodsCount = finishedGoods.Sum(x => (int)x.CurrentStock),
-            MonthlyProductionOutput = batches.Where(x => x.ProducedAt >= DateTime.UtcNow.AddDays(-30)).Sum(x => x.ProducedQuantity),
+            MonthlyProductionOutput = batches.Sum(x => x.ProducedQuantity),
             TotalSuppliers = suppliers.Count,
             Alerts = rawMaterials.Where(x => x.CurrentStock <= x.ReorderLevel).Select(x => new AlertItemViewModel { Title = "Low Stock Alert", Message = $"{x.Name} is below reorder level.", Tone = "warning" }).Take(3).ToList()
         };
@@ -115,7 +123,7 @@ public sealed class DashboardService : IDashboardService
         dashboard.ProductionOutputTrend = new ChartSeriesViewModel
         {
             Labels = Enumerable.Range(0, 6).Select(i => DateTime.UtcNow.AddMonths(-5 + i).ToString("MMM")).ToList(),
-            Values = Enumerable.Range(0, 6).Select(i => batches.Where(x => x.ProducedAt.Month == DateTime.UtcNow.AddMonths(-5 + i).Month).Sum(x => x.ProducedQuantity)).ToList()
+            Values = Enumerable.Range(0, 6).Select(i => batches.Where(x => x.ProducedAt.Month == DateTime.UtcNow.AddMonths(-5 + i).Month && x.ProducedAt.Year == DateTime.UtcNow.AddMonths(-5 + i).Year).Sum(x => x.ProducedQuantity)).ToList()
         };
 
         dashboard.InventoryMovementChart = new ChartSeriesViewModel
@@ -130,40 +138,67 @@ public sealed class DashboardService : IDashboardService
             }.ToList()
         };
 
+        var topProducts = batches
+            .Where(b => b.ProductId > 0)
+            .GroupBy(b => b.ProductId)
+            .Select(g => new { ProductId = g.Key, Total = g.Sum(b => b.ProducedQuantity) })
+            .OrderByDescending(x => x.Total)
+            .Take(5)
+            .ToList();
+
         dashboard.TopProducedProducts = new ChartSeriesViewModel
         {
-            Labels = products.Take(5).Select(x => x.Name).ToList(),
-            Values = products.Take(5).Select(x => batches.Where(b => b.ProductId == x.Id).Sum(b => b.ProducedQuantity)).ToList()
+            Labels = topProducts.Select(x => products.FirstOrDefault(p => p.Id == x.ProductId)?.Name ?? "Unknown").ToList(),
+            Values = topProducts.Select(x => x.Total).ToList()
         };
+
+        var materialConsumption = batches
+            .Where(b => b.RawMaterialConsumed > 0)
+            .GroupBy(b => b.ProductId)
+            .Select(g => new { ProductId = g.Key, TotalConsumed = g.Sum(b => b.RawMaterialConsumed) })
+            .OrderByDescending(x => x.TotalConsumed)
+            .Take(5)
+            .ToList();
 
         dashboard.MaterialConsumption = new ChartSeriesViewModel
         {
-            Labels = rawMaterials.Take(5).Select(x => x.Name).ToList(),
-            Values = rawMaterials.Take(5).Select(x => Math.Round(x.CurrentStock * 0.65m, 0)).ToList()
+            Labels = materialConsumption.Select(x => products.FirstOrDefault(p => p.Id == x.ProductId)?.Name ?? "Unknown").ToList(),
+            Values = materialConsumption.Select(x => x.TotalConsumed).ToList()
         };
 
-        dashboard.RecentActivities = purchases.Take(3).Select(x => new ActivityItemViewModel
+        var recentPurchases = purchases.OrderByDescending(x => x.PurchasedOn).Take(3).Select(x => new ActivityItemViewModel
         {
             Title = "Recent Purchase",
             Description = $"{x.PurchaseNumber} from {x.Supplier?.Name ?? "Unknown supplier"}",
             TimeAgo = x.PurchasedOn.ToString("dd MMM yyyy"),
             Badge = x.Status.ToString(),
             BadgeTone = x.Status == PurchaseStatus.Received ? "success" : "warning"
-        }).Concat(workOrders.Take(3).Select(x => new ActivityItemViewModel
+        });
+
+        var recentWorkOrders = workOrders.OrderByDescending(x => x.ScheduledDate).Take(3).Select(x => new ActivityItemViewModel
         {
             Title = "Work Order Update",
             Description = $"{x.WorkOrderNumber} for {x.Quantity:N0} units",
             TimeAgo = x.ScheduledDate.ToString("dd MMM yyyy"),
             Badge = x.Status.ToString(),
             BadgeTone = x.Status == WorkOrderStatus.InProgress ? "primary" : "secondary"
-        })).Concat(movements.Take(3).Select(x => new ActivityItemViewModel
+        });
+
+        var recentMovements = movements.OrderByDescending(x => x.MovementDate).Take(3).Select(x => new ActivityItemViewModel
         {
             Title = "Stock Movement",
             Description = $"{x.ItemName} - {x.MovementType}",
             TimeAgo = x.MovementDate.ToString("dd MMM yyyy"),
             Badge = x.MovementType.ToString(),
             BadgeTone = x.MovementType == InventoryMovementType.StockIn ? "success" : "danger"
-        })).ToList();
+        });
+
+        dashboard.RecentActivities = recentPurchases
+            .Concat(recentWorkOrders)
+            .Concat(recentMovements)
+            .OrderByDescending(x => DateTime.ParseExact(x.TimeAgo, "dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture))
+            .Take(10)
+            .ToList();
 
         return dashboard;
     }

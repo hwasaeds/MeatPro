@@ -20,7 +20,8 @@ public sealed class LoginViewModel
 
 public sealed class DashboardViewModel
 {
-    public int SelectedPeriodDays { get; set; } = 30;
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
     public int TotalRawMaterials { get; set; }
     public int LowStockMaterials { get; set; }
     public int ActiveWorkOrders { get; set; }
