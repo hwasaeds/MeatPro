@@ -10,7 +10,10 @@
             <h1 class="h3 mb-1">@Model.Title</h1>
             <p class="text-secondary mb-0">@Model.Subtitle</p>
         </div>
-        <a href="@Model.PrimaryActionUrl" class="btn btn-meatpro">@Model.PrimaryActionText</a>
+        @if (!string.IsNullOrWhiteSpace(Model.PrimaryActionText) && Model.PrimaryActionUrl != "#")
+        {
+            <a href="@Model.PrimaryActionUrl" class="btn btn-meatpro">@Model.PrimaryActionText</a>
+        }
     </div>
 
     <div class="dashboard-grid mb-4">

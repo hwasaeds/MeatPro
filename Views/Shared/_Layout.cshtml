@@ -74,7 +74,7 @@
                 <button class="sidebar-toggle" type="button" data-sidebar-toggle><i class="bi bi-list"></i></button>
                 <div class="search-shell">
                     <i class="bi bi-search"></i>
-                    <input type="search" class="form-control" placeholder="Search materials, products, suppliers, work orders..." />
+                    <input type="search" class="form-control d-none d-md-block" placeholder="Search materials, products, suppliers, work orders..." />
                 </div>
                 <div class="topbar-actions">
                     <div class="dropdown">
@@ -85,7 +85,7 @@
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.55rem;">@alertCount</span>
                             }
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end p-2 shadow-lg" style="min-width:300px;border-radius:12px;border:1px solid var(--mp-border);">
+                        <div class="dropdown-menu dropdown-menu-end p-2 shadow-lg" style="min-width:min(300px, 90vw);border-radius:12px;border:1px solid var(--mp-border);">
                             @if (ViewBag.ActiveAlerts is IReadOnlyList<MeatPro.Models.NotificationItem> alerts && alerts.Count > 0)
                             {
                                 foreach (var alert in alerts)
@@ -104,7 +104,7 @@
                     </div>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-meatpro btn-sm">Logout</button>
+                        <button type="submit" class="btn btn-meatpro btn-sm"><span class="d-none d-sm-inline">Logout</span><i class="bi bi-box-arrow-right d-sm-none"></i></button>
                     </form>
                 </div>
             </header>
